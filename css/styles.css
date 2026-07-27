@@ -110,7 +110,8 @@ button {
   letter-spacing: -0.02em;
 }
 
-.brand span {
+.brand em {
+  font-style: normal;
   color: var(--accent);
 }
 
