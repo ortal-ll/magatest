@@ -30,14 +30,10 @@ async function loadRecentResults() {
     const data = await fetchResults({ mode: 'recent', limit: 12 });
     const results = data.results || [];
     if (meta) {
-      meta.textContent =
-        data.attempts > 0
-          ? `Всего попыток: ${data.attempts}`
-          : 'Пока нет попыток — пройдите тест и сохраните результат';
+      meta.textContent = data.attempts > 0 ? `Всего попыток: ${data.attempts}` : '';
     }
     if (!results.length) {
-      list.innerHTML =
-        '<li class="leaderboard-empty">Результаты появятся после сохранения на Netlify + Upstash</li>';
+      list.innerHTML = '<li class="leaderboard-empty">Пока нет результатов</li>';
       return;
     }
     list.innerHTML = results
@@ -52,12 +48,8 @@ async function loadRecentResults() {
       )
       .join('');
   } catch {
-    if (meta) {
-      meta.textContent =
-        'Рейтинг доступен после деплоя на Netlify с переменными Upstash';
-    }
-    list.innerHTML =
-      '<li class="leaderboard-empty">API / Redis пока недоступны локально без netlify dev</li>';
+    if (meta) meta.textContent = '';
+    list.innerHTML = '<li class="leaderboard-empty">Пока нет результатов</li>';
   }
 }
 
@@ -66,7 +58,6 @@ async function init() {
   const loading = document.getElementById('subjectLoading');
   const errorBox = document.getElementById('subjectError');
   const titleEl = document.getElementById('subjectTitle');
-  const descEl = document.getElementById('subjectDesc');
 
   const id = getQueryParam('id') || 'm094';
 
@@ -80,7 +71,6 @@ async function init() {
 
     document.title = `${subject.title} — МагаТест`;
     if (titleEl) titleEl.textContent = subject.title;
-    if (descEl) descEl.textContent = subject.description;
 
     renderTestList(list, subject.tests);
     loading?.classList.add('hidden');
