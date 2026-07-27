@@ -80,9 +80,9 @@ async function saveResult(event) {
     createdAt,
   };
 
-  // Score for sorted set: percent * 1e10 + timestamp — higher % ranks first,
-  // newer results win ties.
-  const score = percent * 1e10 + Date.now();
+  // Score for sorted set: higher % ranks first, newer results win ties.
+  // Множитель 1e12 гарантирует, что секунды (≈1.8e9) никогда не перевесят 1%.
+  const score = percent * 1e12 + Math.floor(Date.now() / 1000);
 
   await redisPipeline([
     ['SET', keys.result(id), JSON.stringify(record)],
