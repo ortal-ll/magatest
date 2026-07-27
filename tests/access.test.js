@@ -15,6 +15,7 @@ import {
   isProtectedAccessPath,
   ACCESS_COOKIE_NAME,
   CODE_TTL_MS,
+  SESSION_TTL_SEC,
 } from '../netlify/lib/access.js';
 
 describe('access helpers', () => {
@@ -69,6 +70,10 @@ describe('access helpers', () => {
     assert.equal(verifyAdminPassword(''), false);
     if (prev == null) delete process.env.ADMIN_PASSWORD;
     else process.env.ADMIN_PASSWORD = prev;
+  });
+
+  it('session TTL is three months', () => {
+    assert.equal(SESSION_TTL_SEC, 60 * 60 * 24 * 90);
   });
 
   it('validates session tokens and cookies', () => {

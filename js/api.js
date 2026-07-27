@@ -4,7 +4,7 @@ const API_BASE = '/api';
 export const ACCESS_TOKEN_KEY = 'magatest-access-token';
 export const ACCESS_COOKIE_NAME = 'magatest-access';
 export const ADMIN_PASSWORD_KEY = 'magatest-admin-password';
-const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 30;
+const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 90; // 3 months
 
 function readCookie(name) {
   try {

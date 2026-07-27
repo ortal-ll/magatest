@@ -5,7 +5,7 @@
 
 export const ACCESS_COOKIE_NAME = 'magatest-access';
 export const SESSION_STORAGE_KEY = 'magatest-access-token';
-export const SESSION_TTL_SEC = 60 * 60 * 24 * 30; // 30 days
+export const SESSION_TTL_SEC = 60 * 60 * 24 * 90; // 3 months
 
 export function parseCookieHeader(cookieHeader) {
   const out = {};
