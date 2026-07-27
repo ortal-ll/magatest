@@ -1,11 +1,7 @@
 import { json, handleOptions } from '../lib/http.js';
 import { redis, keys, isRedisConfigured } from '../lib/redis.js';
 
-const TESTS = [
-  'algorithms-screenshots',
-  'algorithms-test1',
-  'databases-test1',
-];
+const TESTS = ['algorithms', 'databases'];
 
 /**
  * GET /api/stats — агрегированная статистика по тестам из Redis

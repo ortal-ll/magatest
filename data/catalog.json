@@ -8,25 +8,18 @@
       "description": "Подготовка к вступительным тестам в магистратуру по направлению «Информационные технологии».",
       "tests": [
         {
-          "id": "algorithms-screenshots",
-          "title": "Алгоритмы и структуры данных — Тест (скриншоты)",
+          "id": "algorithms",
+          "title": "Алгоритмы и структуры данных",
           "topic": "Алгоритмы и структуры данных",
-          "count": 30,
-          "file": "algorithms-screenshots.json"
+          "count": 68,
+          "file": "algorithms.json"
         },
         {
-          "id": "algorithms-test1",
-          "title": "Алгоритмы и структуры данных — Тест 1",
-          "topic": "Алгоритмы и структуры данных",
-          "count": 30,
-          "file": "algorithms-test1.json"
-        },
-        {
-          "id": "databases-test1",
-          "title": "Базы данных (СУБД) — Тест 1",
+          "id": "databases",
+          "title": "Базы данных (СУБД)",
           "topic": "Базы данных",
           "count": 20,
-          "file": "databases-test1.json"
+          "file": "databases.json"
         }
       ]
     }

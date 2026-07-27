@@ -131,11 +131,7 @@ describe('question banks integrity', async () => {
   const { fileURLToPath } = await import('url');
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-  for (const file of [
-    'algorithms-screenshots.json',
-    'algorithms-test1.json',
-    'databases-test1.json',
-  ]) {
+  for (const file of ['algorithms.json', 'databases.json']) {
     it(`${file} has valid structure`, () => {
       const bank = JSON.parse(readFileSync(join(root, 'data', file), 'utf8'));
       assert.ok(bank.id);

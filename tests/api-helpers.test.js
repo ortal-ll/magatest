@@ -41,7 +41,7 @@ describe('http helpers', () => {
 describe('redis helpers', () => {
   it('builds namespaced keys', () => {
     assert.equal(keys.result('abc'), 'magatest:result:abc');
-    assert.equal(keys.leaderboard('algorithms-test1'), 'magatest:lb:algorithms-test1');
+    assert.equal(keys.leaderboard('algorithms'), 'magatest:lb:algorithms');
     assert.equal(keys.recentAll(), 'magatest:recent:all');
   });
 
