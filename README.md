@@ -6,19 +6,49 @@
 
 1. **Информационные технологии M094** — алгоритмы, структуры данных, базы данных.
 
+## Стек
+
+- Статический фронтенд (HTML/CSS/JS)
+- **Netlify** — хостинг + serverless Functions (`/api/*`)
+- **Upstash Redis** — база результатов и рейтинга
+
 ## Возможности
 
 - Перемешивание вопросов и вариантов ответов при каждом запуске
 - Мгновенная проверка выбранного ответа
 - Итоговый результат с разбором
+- Сохранение результата в Redis (имя + балл)
+- Рейтинг / недавние попытки
 - Адаптивная вёрстка для телефона и компьютера
+
+## Переменные окружения
+
+В Netlify → Site settings → Environment variables:
+
+| Variable | Описание |
+|---|---|
+| `UPSTASH_REDIS_REST_URL` | REST URL из консоли Upstash |
+| `UPSTASH_REDIS_REST_TOKEN` | REST TOKEN из консоли Upstash |
+
+Локально скопируйте `.env.example` → `.env` (файл в `.gitignore`).
+
+## API
+
+| Метод | Путь | Описание |
+|---|---|---|
+| GET | `/api/health` | Проверка Netlify + Redis (`PING`) |
+| GET | `/api/stats` | Счётчики попыток |
+| GET | `/api/results?testId=&mode=top\|recent` | Рейтинг / недавние |
+| POST | `/api/results` | Сохранить результат |
 
 ## Запуск
 
-Откройте `index.html` в браузере или поднимите локальный сервер:
-
 ```bash
+# только статика (без API)
 npm run serve
+
+# Netlify Functions + Redis (нужен .env)
+npm run dev
 ```
 
 ## Тесты
@@ -26,6 +56,13 @@ npm run serve
 ```bash
 npm test
 ```
+
+## Деплой на Netlify
+
+1. Подключите репозиторий к Netlify
+2. Publish directory: `.` (корень), Functions: `netlify/functions` (уже в `netlify.toml`)
+3. Добавьте `UPSTASH_REDIS_REST_URL` и `UPSTASH_REDIS_REST_TOKEN`
+4. Deploy
 
 ## Добавление вопросов
 

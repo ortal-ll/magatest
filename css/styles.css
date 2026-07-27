@@ -663,6 +663,145 @@ button {
 .review-item.ok .mark { color: var(--correct); }
 .review-item.bad .mark { color: var(--wrong); }
 
+/* —— Save score / leaderboard —— */
+.save-score,
+.leaderboard-block {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+
+.save-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.save-hint {
+  margin: 0 0 0.9rem;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+}
+
+.save-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.65rem;
+  align-items: end;
+}
+
+.save-label {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.save-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  font: inherit;
+  background: #fff;
+  color: var(--ink);
+}
+
+.save-input:focus {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+  border-color: var(--teal);
+}
+
+.save-status {
+  margin: 0.75rem 0 0;
+  font-size: 0.92rem;
+  color: var(--ink-muted);
+  min-height: 1.25em;
+}
+
+.save-status.is-ok {
+  color: var(--correct);
+  font-weight: 700;
+}
+
+.save-status.is-error {
+  color: var(--wrong);
+}
+
+.leaderboard {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.leaderboard-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "rank name score"
+    "rank meta meta";
+  gap: 0.15rem 0.75rem;
+  align-items: center;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.lb-rank {
+  grid-area: rank;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.lb-name {
+  grid-area: name;
+  font-weight: 700;
+}
+
+.lb-score {
+  grid-area: score;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--accent-hover);
+}
+
+.lb-meta {
+  grid-area: meta;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+.leaderboard-empty {
+  padding: 0.9rem;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 720px) {
+  .save-form {
+    grid-template-columns: 1fr;
+  }
+
+  .save-form .btn {
+    width: 100%;
+  }
+}
+
 /* —— Footer —— */
 .site-footer {
   max-width: var(--max);

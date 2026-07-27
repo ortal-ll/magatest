@@ -5,6 +5,7 @@ import {
   gradeLabel,
 } from './quiz-engine.js';
 import { getQueryParam } from './catalog-ui.js';
+import { saveResult, fetchResults } from './api.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -32,11 +33,19 @@ const els = {
   statWrong: document.getElementById('statWrong'),
   statTotal: document.getElementById('statTotal'),
   reviewList: document.getElementById('reviewList'),
+  saveScoreBox: document.getElementById('saveScoreBox'),
+  saveScoreForm: document.getElementById('saveScoreForm'),
+  playerName: document.getElementById('playerName'),
+  btnSaveScore: document.getElementById('btnSaveScore'),
+  saveStatus: document.getElementById('saveStatus'),
+  leaderboardList: document.getElementById('leaderboardList'),
 };
 
 let bank = null;
 let questions = [];
 let currentIndex = 0;
+let lastScore = null;
+let scoreSaved = false;
 
 function showError(message) {
   els.loading?.classList.add('hidden');
@@ -160,10 +169,75 @@ function goPrev() {
   renderQuestion();
 }
 
+function formatDate(iso) {
+  try {
+    return new Date(iso).toLocaleString('ru-RU', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function renderLeaderboard(results) {
+  if (!els.leaderboardList) return;
+  if (!results?.length) {
+    els.leaderboardList.innerHTML =
+      '<li class="leaderboard-empty">Пока нет сохранённых результатов</li>';
+    return;
+  }
+  els.leaderboardList.innerHTML = results
+    .map(
+      (r, i) => `
+    <li class="leaderboard-item">
+      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-name">${escapeText(r.name || 'Аноним')}</span>
+      <span class="lb-score">${r.percent}%</span>
+      <span class="lb-meta">${r.correct}/${r.total} · ${formatDate(r.createdAt)}</span>
+    </li>`
+    )
+    .join('');
+}
+
+async function loadLeaderboard() {
+  if (!bank?.id) return;
+  try {
+    const data = await fetchResults({
+      testId: bank.id,
+      mode: 'top',
+      limit: 10,
+    });
+    renderLeaderboard(data.results || []);
+  } catch {
+    if (els.leaderboardList) {
+      els.leaderboardList.innerHTML =
+        '<li class="leaderboard-empty">Рейтинг появится после деплоя на Netlify с Upstash</li>';
+    }
+  }
+}
+
+function resetSaveForm() {
+  scoreSaved = false;
+  if (els.saveStatus) {
+    els.saveStatus.textContent = '';
+    els.saveStatus.classList.remove('is-ok', 'is-error');
+  }
+  if (els.btnSaveScore) {
+    els.btnSaveScore.disabled = false;
+    els.btnSaveScore.textContent = 'Сохранить';
+  }
+  if (els.saveScoreBox) els.saveScoreBox.classList.remove('hidden');
+}
+
 function showResults() {
   const score = computeScore(questions);
+  lastScore = score;
   els.app.classList.add('hidden');
   els.results.classList.remove('hidden');
+  resetSaveForm();
 
   els.resultsPercent.textContent = `${score.percent}%`;
   els.resultsGrade.textContent = gradeLabel(score.percent);
@@ -189,6 +263,7 @@ function showResults() {
     })
     .join('');
 
+  loadLeaderboard();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -202,12 +277,51 @@ function escapeText(str) {
 function startQuiz() {
   questions = prepareQuiz(bank.questions);
   currentIndex = 0;
+  lastScore = null;
   els.results.classList.add('hidden');
   els.app.classList.remove('hidden');
   document.title = `${bank.title} — МагаТест`;
   els.title.textContent = bank.title;
   renderQuestion();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function onSaveScore(event) {
+  event.preventDefault();
+  if (!bank || !lastScore || scoreSaved) return;
+
+  const name = els.playerName?.value?.trim() || 'Аноним';
+  if (els.btnSaveScore) els.btnSaveScore.disabled = true;
+  if (els.saveStatus) els.saveStatus.textContent = 'Сохраняем…';
+
+  try {
+    await saveResult({
+      testId: bank.id,
+      title: bank.title,
+      name,
+      correct: lastScore.correct,
+      total: lastScore.total,
+      percent: lastScore.percent,
+    });
+    scoreSaved = true;
+    if (els.saveStatus) {
+      els.saveStatus.textContent = 'Сохранено в Redis ✓';
+      els.saveStatus.classList.remove('is-error');
+      els.saveStatus.classList.add('is-ok');
+    }
+    if (els.btnSaveScore) els.btnSaveScore.textContent = 'Сохранено';
+    await loadLeaderboard();
+  } catch (err) {
+    if (els.saveStatus) {
+      els.saveStatus.textContent =
+        err.status === 503
+          ? 'База ещё не подключена: задайте Upstash в Netlify Environment Variables'
+          : err.message;
+      els.saveStatus.classList.add('is-error');
+      els.saveStatus.classList.remove('is-ok');
+    }
+    if (els.btnSaveScore) els.btnSaveScore.disabled = false;
+  }
 }
 
 async function init() {
@@ -233,5 +347,6 @@ async function init() {
 els.btnNext?.addEventListener('click', goNext);
 els.btnPrev?.addEventListener('click', goPrev);
 els.btnRetry?.addEventListener('click', startQuiz);
+els.saveScoreForm?.addEventListener('submit', onSaveScore);
 
 init();

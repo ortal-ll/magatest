@@ -75,6 +75,31 @@
         <button type="button" class="btn btn-primary" id="btnRetry">Пройти ещё раз</button>
         <a class="btn btn-secondary" href="subject.html?id=m094">К списку тестов</a>
       </div>
+
+      <div class="save-score" id="saveScoreBox">
+        <h3 class="save-title">Сохранить результат в облако</h3>
+        <p class="save-hint">Имя и балл запишутся в Upstash Redis (через Netlify).</p>
+        <form class="save-form" id="saveScoreForm">
+          <label class="save-label" for="playerName">Имя</label>
+          <input
+            class="save-input"
+            id="playerName"
+            name="name"
+            type="text"
+            maxlength="40"
+            placeholder="Как вас показать в рейтинге"
+            autocomplete="nickname"
+          />
+          <button type="submit" class="btn btn-secondary" id="btnSaveScore">Сохранить</button>
+        </form>
+        <p class="save-status" id="saveStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="leaderboard-block" id="leaderboardBlock">
+        <h3 class="save-title">Топ по этому тесту</h3>
+        <ul class="leaderboard" id="leaderboardList"></ul>
+      </div>
+
       <ul class="review-list" id="reviewList" aria-label="Разбор ответов"></ul>
     </section>
   </main>
