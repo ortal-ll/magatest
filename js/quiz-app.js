@@ -9,6 +9,8 @@ import { saveResult, fetchResults } from './api.js';
 import { getDiagramHtml } from './diagrams.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+/** Bump when question banks change so browsers/CDN refetch JSON. */
+const DATA_VERSION = 'kz-full-1';
 
 const els = {
   loading: document.getElementById('quizLoading'),
@@ -85,27 +87,56 @@ function ui() {
 }
 
 function qText(q) {
-  return quizLang === 'kz' && q.textKz ? q.textKz : q.text;
+  if (quizLang === 'kz') {
+    return q.textKz || q.text;
+  }
+  return q.text;
 }
 
 function optText(opt) {
-  return quizLang === 'kz' && opt.textKz ? opt.textKz : opt.text;
+  if (quizLang === 'kz') {
+    return opt.textKz || opt.text;
+  }
+  return opt.text;
 }
 
 function qExplanation(q) {
-  if (quizLang === 'kz' && q.explanationKz) return q.explanationKz;
+  if (quizLang === 'kz') {
+    return q.explanationKz || q.explanation || '';
+  }
   return q.explanation ?? '';
 }
 
 function bankTitle() {
   if (!bank) return '';
-  return quizLang === 'kz' && bank.titleKz ? bank.titleKz : bank.title;
+  if (quizLang === 'kz') return bank.titleKz || bank.title;
+  return bank.title;
 }
 
 function syncLangButtons() {
   document.querySelectorAll('.lang-btn').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.lang === quizLang);
+    const active = btn.dataset.lang === quizLang;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
+  document.documentElement.lang = quizLang === 'kz' ? 'kk' : 'ru';
+}
+
+function applyChromeLang() {
+  syncLangButtons();
+  if (els.title && bank) els.title.textContent = bankTitle();
+  if (bank) document.title = `${bankTitle()} — МагаТест`;
+  const backLink = document.querySelector('#quizBack a');
+  if (backLink) {
+    backLink.textContent =
+      quizLang === 'kz' ? '← M094 тесттеріне' : '← К тестам M094';
+  }
+  updateProgress();
+  if (els.btnPrev) els.btnPrev.textContent = ui().back;
+  if (els.btnNext) {
+    els.btnNext.textContent =
+      currentIndex >= questions.length - 1 ? ui().result : ui().next;
+  }
 }
 
 function showError(message) {
@@ -146,12 +177,12 @@ function replayCardAnimation() {
   card.classList.add('swap');
 }
 
-function renderQuestion() {
+function renderQuestion({ animate = true } = {}) {
   const q = questions[currentIndex];
   if (!q) return;
 
-  replayCardAnimation();
-  syncLangButtons();
+  if (animate) replayCardAnimation();
+  applyChromeLang();
   els.qNum.textContent = ui().questionN(currentIndex + 1);
   els.qText.textContent = qText(q);
   els.qExplanation.classList.remove('show');
@@ -184,8 +215,10 @@ function renderQuestion() {
     text.textContent = optText(opt);
 
     btn.append(letter, text);
-    btn.classList.add('option-enter');
-    btn.style.animationDelay = `${80 + i * 55}ms`;
+    if (animate) {
+      btn.classList.add('option-enter');
+      btn.style.animationDelay = `${80 + i * 55}ms`;
+    }
 
     if (q.answered) {
       btn.disabled = true;
@@ -207,12 +240,9 @@ function renderQuestion() {
   }
 
   els.btnPrev.disabled = currentIndex === 0;
-  if (els.btnPrev) els.btnPrev.textContent = ui().back;
   els.btnNext.disabled = !q.answered;
   els.btnNext.textContent =
     currentIndex === questions.length - 1 ? ui().result : ui().next;
-
-  updateProgress();
 }
 
 function onSelect(optionIndex) {
@@ -243,19 +273,22 @@ function onSelect(optionIndex) {
 
 function setQuizLang(lang) {
   if (lang !== 'ru' && lang !== 'kz') return;
+  if (quizLang === lang) {
+    applyChromeLang();
+    return;
+  }
   quizLang = lang;
   try {
     localStorage.setItem('magatest-quiz-lang', lang);
   } catch {
     /* ignore */
   }
-  if (els.title && bank) els.title.textContent = bankTitle();
-  if (bank) document.title = `${bankTitle()} — МагаТест`;
-  if (questions.length && !els.results?.classList.contains('hidden')) {
+  applyChromeLang();
+  if (questions.length && els.results && !els.results.classList.contains('hidden')) {
     showResults();
     return;
   }
-  if (questions.length) renderQuestion();
+  if (questions.length) renderQuestion({ animate: false });
 }
 
 function goNext() {
@@ -463,7 +496,11 @@ async function init() {
   }
 
   try {
-    const res = await fetch(`data/${encodeURIComponent(id)}.json`);
+    // Cache-bust so language packs in JSON are not stuck on an old CDN copy
+    const res = await fetch(
+      `data/${encodeURIComponent(id)}.json?v=${encodeURIComponent(DATA_VERSION)}`,
+      { cache: 'no-cache' }
+    );
     if (!res.ok) throw new Error('Тест не найден');
     bank = await res.json();
     if (!bank.questions?.length) throw new Error('В тесте нет вопросов');
@@ -479,7 +516,14 @@ els.btnNext?.addEventListener('click', goNext);
 els.btnPrev?.addEventListener('click', goPrev);
 els.btnRetry?.addEventListener('click', startQuiz);
 els.saveScoreForm?.addEventListener('submit', onSaveScore);
-document.getElementById('langRu')?.addEventListener('click', () => setQuizLang('ru'));
-document.getElementById('langKz')?.addEventListener('click', () => setQuizLang('kz'));
+
+document.querySelectorAll('.lang-toggle').forEach((toggle) => {
+  toggle.addEventListener('click', (event) => {
+    const btn = event.target.closest('.lang-btn');
+    if (!btn || !toggle.contains(btn)) return;
+    event.preventDefault();
+    setQuizLang(btn.dataset.lang);
+  });
+});
 
 init();

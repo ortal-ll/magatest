@@ -36,7 +36,13 @@
         <p class="quiz-meta" id="quizBack">
           <a href="subject.html?id=m094" style="color:rgba(255,255,255,0.75)">← К тестам M094</a>
         </p>
-        <h1 id="quizTitle">Тест</h1>
+        <div class="quiz-top-row">
+          <h1 id="quizTitle">Тест</h1>
+          <div class="lang-toggle lang-toggle--on-dark" role="group" aria-label="Язык / Тіл">
+            <button type="button" class="lang-btn is-active" id="langRu" data-lang="ru" aria-pressed="true">RU</button>
+            <button type="button" class="lang-btn" id="langKz" data-lang="kz" aria-pressed="false">KZ</button>
+          </div>
+        </div>
         <div class="progress-wrap" aria-live="polite">
           <div class="progress-label">
             <span id="progressText">Вопрос 1 из 1</span>
@@ -49,13 +55,7 @@
       </section>
 
       <section class="question-card" id="questionCard" aria-live="polite">
-        <div class="q-head">
-          <div class="q-num" id="qNum">Вопрос 1</div>
-          <div class="lang-toggle" role="group" aria-label="Язык вопроса">
-            <button type="button" class="lang-btn is-active" id="langRu" data-lang="ru">RU</button>
-            <button type="button" class="lang-btn" id="langKz" data-lang="kz">KZ</button>
-          </div>
-        </div>
+        <div class="q-num" id="qNum">Вопрос 1</div>
         <p class="q-text" id="qText"></p>
         <div class="q-diagram-slot" id="qDiagram" hidden></div>
         <ul class="options" id="qOptions"></ul>
