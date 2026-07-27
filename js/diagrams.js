@@ -202,6 +202,89 @@ export function buildParallelRlcSwitch() {
 </figure>`;
 }
 
+/** T-equivalent circuit of an induction motor (referred to stator). */
+export function buildInductionMotorTCircuit() {
+  return `
+<figure class="q-diagram" aria-label="Схема замещения асинхронного двигателя">
+  <svg viewBox="0 0 680 260" role="img" class="q-diagram-svg">
+    <defs>
+      <marker id="arrIm" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
+        <path d="M0,0 L3.5,7 L7,0 Z" fill="#1a455c"/>
+      </marker>
+      <marker id="arrI1" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
+      </marker>
+      <marker id="arrI2" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+        <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
+      </marker>
+    </defs>
+
+    <!-- left terminals -->
+    <circle cx="24" cy="70" r="4.5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="24" cy="220" r="4.5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <line x1="28.5" y1="70" x2="62" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <line x1="28.5" y1="220" x2="290" y2="220" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- I1 -->
+    <line x1="50" y1="40" x2="130" y2="40" stroke="#1a455c" stroke-width="1.6" marker-end="url(#arrI1)"/>
+    <text x="78" y="32" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">I₁</text>
+
+    <!-- r1 -->
+    <path d="M62,70 L74,56 L86,84 L98,56 L110,84 L122,56 L134,70" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="88" y="102" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">r₁</text>
+    <line x1="134" y1="70" x2="158" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- X1 -->
+    <path d="M158,70 a11,11 0 0 1 22,0 a11,11 0 0 1 22,0 a11,11 0 0 1 22,0 a11,11 0 0 1 22,0" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="190" y="102" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">X₁</text>
+    <line x1="246" y1="70" x2="290" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- magnetizing node + branch -->
+    <circle cx="290" cy="70" r="3" fill="#1a455c"/>
+    <line x1="290" y1="70" x2="290" y2="100" stroke="#1a455c" stroke-width="2"/>
+    <line x1="268" y1="105" x2="268" y2="155" stroke="#1a455c" stroke-width="1.5" marker-end="url(#arrIm)"/>
+    <text x="244" y="135" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">Iₘ</text>
+
+    <!-- rm -->
+    <path d="M290,100 L278,112 L302,124 L278,136 L302,148 L290,160" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="308" y="136" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">rₘ</text>
+    <line x1="290" y1="160" x2="290" y2="172" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- Xm -->
+    <path d="M290,172 a10,10 0 0 1 0,20 a10,10 0 0 1 0,20 a10,10 0 0 1 0,20" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="308" y="202" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">Xₘ</text>
+    <line x1="290" y1="232" x2="290" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="290" cy="220" r="3" fill="#1a455c"/>
+
+    <!-- continue top rail to rotor -->
+    <line x1="290" y1="70" x2="340" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- I'2 -->
+    <line x1="350" y1="40" x2="480" y2="40" stroke="#1a455c" stroke-width="1.6" marker-end="url(#arrI2)"/>
+    <text x="400" y="32" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">I′₂</text>
+
+    <!-- X'2 -->
+    <path d="M340,70 a11,11 0 0 1 22,0 a11,11 0 0 1 22,0 a11,11 0 0 1 22,0 a11,11 0 0 1 22,0" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="372" y="102" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">X′₂</text>
+    <line x1="428" y1="70" x2="450" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- r'2 -->
+    <path d="M450,70 L462,56 L474,84 L486,56 L498,84 L510,56 L522,70" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="475" y="102" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">r′₂</text>
+    <line x1="522" y1="70" x2="545" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- r'2 (1-s)/s -->
+    <path d="M545,70 L557,56 L569,84 L581,56 L593,84 L605,56 L617,70" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="545" y="102" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">r′₂ (1−s)/s</text>
+
+    <!-- right vertical to bottom -->
+    <line x1="617" y1="70" x2="640" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <line x1="640" y1="70" x2="640" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <line x1="290" y1="220" x2="640" y2="220" stroke="#1a455c" stroke-width="2"/>
+  </svg>
+</figure>`;
+}
+
 /** High-pass T-section filter: two series 500 pF caps, shunt 50 mH. */
 export function buildHighpassTFilter() {
   return `
@@ -246,6 +329,7 @@ const DIAGRAMS = {
   'dc-motor-mechanical-chars': buildDcMotorMechanicalChars,
   'parallel-rlc-switch': buildParallelRlcSwitch,
   'highpass-t-filter': buildHighpassTFilter,
+  'induction-motor-t-circuit': buildInductionMotorTCircuit,
 };
 
 export function getDiagramHtml(diagramId) {
