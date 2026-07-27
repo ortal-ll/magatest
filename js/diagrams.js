@@ -86,11 +86,20 @@ export function buildHashProbingDiagram() {
 </figure>`;
 }
 
-/** DC motor mechanical characteristics n(M): 1 shunt, 2 series, 3–4 compound. */
+/** DC motor mechanical characteristics n(M): 1 shunt, 2 series, 3–4 compound.
+ * Matches testcenter figure: 1/3/4 from n₀; 2 hyperbola (no n₀); all through (Mₙₒₘ, nₙₒₘ). */
 export function buildDcMotorMechanicalChars() {
+  // Axes origin (55,250); n up; M right.
+  // n₀ at y=50; nominal cross at (240, 155).
+  const ox = 55;
+  const oy = 250;
+  const n0y = 50;
+  const mx = 240;
+  const ny = 155;
+
   return `
 <figure class="q-diagram" aria-label="Механические характеристики двигателя постоянного тока">
-  <svg viewBox="0 0 420 300" role="img" class="q-diagram-svg">
+  <svg viewBox="0 0 440 300" role="img" class="q-diagram-svg">
     <defs>
       <marker id="arrN" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
         <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
@@ -99,37 +108,39 @@ export function buildDcMotorMechanicalChars() {
         <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
       </marker>
     </defs>
+
     <!-- axes -->
-    <line x1="55" y1="250" x2="55" y2="28" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrN)"/>
-    <line x1="55" y1="250" x2="390" y2="250" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrM)"/>
-    <text x="42" y="24" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">n</text>
-    <text x="395" y="268" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">M</text>
+    <line x1="${ox}" y1="${oy}" x2="${ox}" y2="22" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrN)"/>
+    <line x1="${ox}" y1="${oy}" x2="410" y2="${oy}" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrM)"/>
+    <text x="40" y="18" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">n</text>
+    <text x="415" y="268" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">M</text>
+    <text x="40" y="268" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">0</text>
 
-    <!-- n0 tick -->
-    <line x1="50" y1="55" x2="60" y2="55" stroke="#1a455c" stroke-width="1.5"/>
-    <text x="30" y="60" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">n₀</text>
+    <!-- n0 -->
+    <line x1="${ox - 5}" y1="${n0y}" x2="${ox + 5}" y2="${n0y}" stroke="#1a455c" stroke-width="1.5"/>
+    <text x="28" y="${n0y + 5}" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">n₀</text>
 
-    <!-- nominal dashed lines -->
-    <line x1="55" y1="145" x2="230" y2="145" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="5 4"/>
-    <line x1="230" y1="250" x2="230" y2="145" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="5 4"/>
-    <text x="8" y="150" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">nₙₒₘ</text>
-    <text x="210" y="272" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">Mₙₒₘ</text>
+    <!-- nominal dashed cross — all curves pass through (${mx}, ${ny}) -->
+    <line x1="${ox}" y1="${ny}" x2="${mx}" y2="${ny}" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <line x1="${mx}" y1="${oy}" x2="${mx}" y2="${ny}" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <text x="6" y="${ny + 5}" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">nₙₒₘ</text>
+    <text x="${mx - 18}" y="275" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">Mₙₒₘ</text>
 
-    <!-- curve 1: nearly flat (shunt/parallel) -->
-    <path d="M55,55 L360,78" fill="none" stroke="#1a455c" stroke-width="2"/>
-    <text x="365" y="72" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1</text>
+    <!-- 1 — shunt: almost flat from n₀ through nominal -->
+    <path d="M${ox},${n0y} L${mx},${ny} L380,168" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="388" y="172" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1</text>
 
-    <!-- curve 4: mild drop (compound) -->
-    <path d="M55,55 Q200,95 340,155" fill="none" stroke="#1a455c" stroke-width="2"/>
-    <text x="345" y="162" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">4</text>
+    <!-- 3 — compound, gentler than 4: from n₀ through nominal -->
+    <path d="M${ox},${n0y} Q150,95 ${mx},${ny} Q320,200 370,235" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="375" y="242" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">3</text>
 
-    <!-- curve 3: steeper compound -->
-    <path d="M55,55 Q175,120 300,210" fill="none" stroke="#1a455c" stroke-width="2"/>
-    <text x="305" y="220" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">3</text>
+    <!-- 4 — compound, steeper than 3: from n₀ through nominal -->
+    <path d="M${ox},${n0y} Q130,110 ${mx},${ny} Q300,185 345,220" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="350" y="228" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">4</text>
 
-    <!-- curve 2: hyperbolic series -->
-    <path d="M55,55 Q95,170 120,250" fill="none" stroke="#1a455c" stroke-width="2"/>
-    <text x="128" y="245" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">2</text>
+    <!-- 2 — series hyperbola: does NOT touch n-axis / n₀; through nominal, steep down -->
+    <path d="M78,28 Q110,90 ${mx},${ny} Q290,210 310,${oy}" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="318" y="245" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">2</text>
   </svg>
 </figure>`;
 }
