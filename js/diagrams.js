@@ -86,12 +86,13 @@ export function buildHashProbingDiagram() {
 </figure>`;
 }
 
-/** DC motor mechanical characteristics n(M): 1 shunt, 2 series, 3–4 compound.
- * Matches testcenter figure: 1/3/4 from n₀; 2 hyperbola (no n₀); all through (Mₙₒₘ, nₙₒₘ). */
+/** DC motor mechanical characteristics n(M) — as on testcenter figure.
+ * 1 horizontal (shunt), 2 hyperbola (series), 3–4 compound; all through nominal point.
+ * nₙₒₘ — curly brace; Mₙₒₘ — double arrow on M-axis. */
 export function buildDcMotorMechanicalChars() {
   return `
 <figure class="q-diagram" aria-label="Механические характеристики двигателя постоянного тока">
-  <svg viewBox="0 0 440 300" role="img" class="q-diagram-svg">
+  <svg viewBox="0 0 460 310" role="img" class="q-diagram-svg">
     <defs>
       <marker id="arrN" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
         <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
@@ -99,40 +100,56 @@ export function buildDcMotorMechanicalChars() {
       <marker id="arrM" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
         <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
       </marker>
+      <marker id="arrDim" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+        <path d="M0,0 L5,3 L0,6 Z" fill="#1a455c"/>
+      </marker>
+      <marker id="arrDimStart" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+        <path d="M5,0 L0,3 L5,6 Z" fill="#1a455c"/>
+      </marker>
     </defs>
 
-    <!-- axes: origin (60,255) -->
-    <line x1="60" y1="255" x2="60" y2="20" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrN)"/>
-    <line x1="60" y1="255" x2="415" y2="255" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrM)"/>
-    <text x="44" y="16" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">n</text>
-    <text x="420" y="272" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">M</text>
-    <text x="44" y="272" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">0</text>
+    <!-- axes -->
+    <line x1="70" y1="250" x2="70" y2="18" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrN)"/>
+    <line x1="70" y1="250" x2="400" y2="250" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrM)"/>
+    <text x="52" y="14" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">n</text>
+    <text x="408" y="256" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">M</text>
+    <text x="54" y="266" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">0</text>
 
-    <!-- n₀ on axis -->
-    <line x1="55" y1="48" x2="65" y2="48" stroke="#1a455c" stroke-width="1.6"/>
-    <text x="30" y="53" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">n₀</text>
+    <!-- n₀ -->
+    <line x1="65" y1="42" x2="75" y2="42" stroke="#1a455c" stroke-width="1.6"/>
+    <text x="38" y="47" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">n₀</text>
 
-    <!-- nominal cross at (250, 130) — common point for curves 1–4 -->
-    <line x1="60" y1="130" x2="250" y2="130" stroke="#1a455c" stroke-width="1.15" stroke-dasharray="5 4"/>
-    <line x1="250" y1="255" x2="250" y2="130" stroke="#1a455c" stroke-width="1.15" stroke-dasharray="5 4"/>
-    <text x="8" y="135" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">nₙₒₘ</text>
-    <text x="228" y="278" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">Mₙₒₘ</text>
+    <!-- common nominal point P = (250, 118) -->
+    <!-- vertical guide to P -->
+    <line x1="250" y1="250" x2="250" y2="118" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="4 3"/>
 
-    <!-- 1 — parallel/shunt: nearly flat from n₀ through nominal -->
-    <path d="M60,48 L250,130 L400,148" fill="none" stroke="#1a455c" stroke-width="2.2"/>
-    <text x="405" y="152" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1</text>
+    <!-- Mₙₒₘ double-headed dimension on M-axis -->
+    <line x1="70" y1="268" x2="250" y2="268" stroke="#1a455c" stroke-width="1.3"
+      marker-start="url(#arrDimStart)" marker-end="url(#arrDim)"/>
+    <text x="140" y="286" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">Mₙₒₘ</text>
 
-    <!-- 3 — compound, milder slope (above 4 after nominal) -->
-    <path d="M60,48 Q160,80 250,130 Q330,175 390,210" fill="none" stroke="#1a455c" stroke-width="2.2"/>
-    <text x="395" y="218" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">3</text>
+    <!-- nₙₒₘ curly brace to the right of vertical guide -->
+    <path d="M265,250 C275,250 275,185 278,185 C275,185 275,118 265,118" fill="none" stroke="#1a455c" stroke-width="1.5"/>
+    <text x="282" y="190" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">nₙₒₘ</text>
 
-    <!-- 4 — compound, steeper than 3 -->
-    <path d="M60,48 Q145,95 250,130 Q310,185 355,235" fill="none" stroke="#1a455c" stroke-width="2.2"/>
-    <text x="360" y="248" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">4</text>
+    <!-- 1 — absolutely rigid / shunt: horizontal through P, from n-axis -->
+    <line x1="70" y1="118" x2="385" y2="118" stroke="#1a455c" stroke-width="2.3"/>
+    <text x="390" y="123" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1</text>
 
-    <!-- 2 — series: hyperbola, does not meet n₀ / n-axis; through nominal down to M-axis -->
-    <path d="M85,22 Q120,85 250,130 Q295,195 315,255" fill="none" stroke="#1a455c" stroke-width="2.2"/>
-    <text x="322" y="248" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">2</text>
+    <!-- 3 — compound, mild: from n₀ through P -->
+    <path d="M70,42 Q170,70 250,118 Q340,165 395,198" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="400" y="206" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">3</text>
+
+    <!-- 4 — compound, steeper than 3: from n₀ through P -->
+    <path d="M70,42 Q155,90 250,118 Q320,175 365,230" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="370" y="242" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">4</text>
+
+    <!-- 2 — series hyperbola: no n₀, through P down to M-axis -->
+    <path d="M95,20 Q125,80 250,118 Q290,185 308,250" fill="none" stroke="#1a455c" stroke-width="2.2"/>
+    <text x="314" y="240" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">2</text>
+
+    <!-- mark intersection -->
+    <circle cx="250" cy="118" r="3" fill="#1a455c"/>
   </svg>
 </figure>`;
 }
