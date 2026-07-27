@@ -82,4 +82,7 @@ export const keys = {
   leaderboard: (testId) => `magatest:lb:${testId}`,
   attempts: (testId) => `magatest:attempts:${testId}`,
   attemptsTotal: () => 'magatest:attempts:total',
+  accessCode: (code) => `magatest:access:code:${code}`,
+  accessSession: (token) => `magatest:access:session:${token}`,
+  accessUsedLog: () => 'magatest:access:used',
 };

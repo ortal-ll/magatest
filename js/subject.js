@@ -1,3 +1,4 @@
+import './access-gate.js';
 import { getQueryParam, loadCatalog, renderTestList } from './catalog-ui.js';
 import { fetchResults } from './api.js';
 

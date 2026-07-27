@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Админ — МагаТест</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="access-body">
+  <main class="access-shell" id="main">
+    <section id="adminLogin" class="access-card">
+      <p class="access-brand">Мага<em>Тест</em></p>
+      <h1 class="access-title">Админ</h1>
+      <p class="access-lead">Пароль из переменной окружения <code>ADMIN_PASSWORD</code>.</p>
+      <form id="adminLoginForm" class="access-form">
+        <label class="access-label" for="adminPassword">Пароль</label>
+        <input
+          id="adminPassword"
+          class="access-input access-input-text"
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+          autofocus
+        />
+        <p id="adminLoginError" class="access-error" hidden></p>
+        <button class="btn btn-primary access-submit" type="submit">Войти</button>
+      </form>
+    </section>
+
+    <section id="adminPanel" class="access-card" hidden>
+      <p class="access-brand">Мага<em>Тест</em></p>
+      <h1 class="access-title">Коды доступа</h1>
+      <p class="access-lead">Одноразовый 6-значный код. Срок — ровно 60 секунд. После ввода на сайте код сгорает.</p>
+
+      <button id="createCodeBtn" class="btn btn-primary access-submit" type="button">Создать код</button>
+      <p id="createError" class="access-error" hidden></p>
+
+      <div id="codeDisplay" class="code-display" hidden>
+        <p class="code-label">Код</p>
+        <p id="codeValue" class="code-value"></p>
+        <p id="codeTimer" class="code-timer"></p>
+      </div>
+
+      <button id="adminLogout" class="btn btn-ghost access-logout" type="button">Выйти</button>
+    </section>
+  </main>
+  <script type="module" src="js/admin-page.js"></script>
+</body>
+</html>

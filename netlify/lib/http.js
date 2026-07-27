@@ -9,7 +9,8 @@ export function json(statusCode, body, extraHeaders = {}) {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers':
+        'Content-Type, X-Access-Token, X-Admin-Password',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       ...extraHeaders,
     },
@@ -22,7 +23,8 @@ export function handleOptions() {
     statusCode: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers':
+        'Content-Type, X-Access-Token, X-Admin-Password',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     },
     body: '',

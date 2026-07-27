@@ -1,3 +1,4 @@
+import './access-gate.js';
 import { loadCatalog, renderTestList } from './catalog-ui.js';
 
 async function init() {

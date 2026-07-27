@@ -1137,3 +1137,163 @@ button {
     transition: none !important;
   }
 }
+
+/* —— Access gate / admin —— */
+html.access-pending body {
+  visibility: hidden;
+}
+
+html.access-ok body,
+html:not(.access-pending) body {
+  visibility: visible;
+}
+
+.access-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.access-shell {
+  width: min(420px, 100%);
+}
+
+.access-card {
+  background: var(--surface-raised);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem 1.5rem;
+  box-shadow: var(--shadow);
+  animation: riseIn 0.45s ease both;
+}
+
+.access-brand {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.access-brand em {
+  font-style: normal;
+  color: var(--accent);
+}
+
+.access-title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.access-lead {
+  margin: 0 0 1.25rem;
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+}
+
+.access-lead code {
+  font-size: 0.85em;
+  background: var(--teal-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+}
+
+.access-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.access-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+
+.access-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+  text-align: center;
+  color: var(--ink);
+  background: var(--surface);
+}
+
+.access-input-text {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+.access-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(31, 138, 122, 0.2);
+}
+
+.access-submit {
+  width: 100%;
+  margin-top: 0.35rem;
+  justify-content: center;
+}
+
+.access-error {
+  margin: 0;
+  color: var(--wrong);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.code-display {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--teal-soft);
+  text-align: center;
+}
+
+.code-display.is-expired {
+  opacity: 0.55;
+}
+
+.code-label {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.code-value {
+  margin: 0.35rem 0;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+}
+
+.code-timer {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--teal);
+}
+
+.access-logout {
+  margin-top: 1.25rem;
+  width: 100%;
+  justify-content: center;
+  color: var(--ink-muted);
+}

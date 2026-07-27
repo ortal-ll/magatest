@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Вход — МагаТест</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="access-body">
+  <main class="access-shell" id="main">
+    <div class="access-card">
+      <p class="access-brand">Мага<em>Тест</em></p>
+      <h1 class="access-title">Код доступа</h1>
+      <p class="access-lead">Введите одноразовый 6-значный код. Он действует 1 минуту и сгорает после входа.</p>
+
+      <form id="accessForm" class="access-form" autocomplete="one-time-code">
+        <label class="access-label" for="accessCode">Код</label>
+        <input
+          id="accessCode"
+          class="access-input"
+          name="code"
+          type="text"
+          inputmode="numeric"
+          pattern="\d{6}"
+          maxlength="6"
+          placeholder="••••••"
+          required
+          autofocus
+        />
+        <p id="accessError" class="access-error" hidden></p>
+        <button id="accessSubmit" class="btn btn-primary access-submit" type="submit">Войти</button>
+      </form>
+    </div>
+  </main>
+  <script type="module" src="js/access-page.js"></script>
+</body>
+</html>

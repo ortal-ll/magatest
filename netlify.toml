@@ -15,7 +15,7 @@
   for = "/api/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Headers = "Content-Type, X-Access-Token, X-Admin-Password"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
 
 # Cache static assets lightly; API never cached via redirects above.

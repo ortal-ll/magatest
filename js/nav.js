@@ -1,3 +1,5 @@
+import './access-gate.js';
+
 /** Mobile nav toggle */
 const toggle = document.getElementById('navToggle');
 const nav = document.getElementById('siteNav');

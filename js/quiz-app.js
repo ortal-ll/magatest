@@ -1,3 +1,4 @@
+import './access-gate.js';
 import {
   prepareQuiz,
   answerQuestion,

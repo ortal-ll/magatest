@@ -19,6 +19,30 @@ const ALLOWED_TESTS = new Set([
   'databases-test1',
 ]);
 
+function header(event, name) {
+  const h = event.headers || {};
+  const lower = name.toLowerCase();
+  for (const [k, v] of Object.entries(h)) {
+    if (k.toLowerCase() === lower) return v;
+  }
+  return '';
+}
+
+async function requireAccess(event) {
+  const token = header(event, 'x-access-token');
+  if (!token || token.length < 16) {
+    const err = new Error('Нужен код доступа');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
+  const raw = await redis('GET', keys.accessSession(token));
+  if (!raw) {
+    const err = new Error('Сессия доступа недействительна');
+    err.code = 'FORBIDDEN';
+    throw err;
+  }
+}
+
 /**
  * POST /api/results — сохранить результат теста в Upstash Redis
  * GET  /api/results?testId=...&limit=10 — топ / недавние результаты
@@ -34,12 +58,17 @@ export async function handler(event) {
   }
 
   try {
+    await requireAccess(event);
     if (event.httpMethod === 'POST') return await saveResult(event);
     if (event.httpMethod === 'GET') return await listResults(event);
     return json(405, { ok: false, error: 'Method not allowed' });
   } catch (err) {
     const status =
-      err.code === 'BAD_JSON' || err.code === 'VALIDATION' ? 400 : 502;
+      err.code === 'BAD_JSON' || err.code === 'VALIDATION'
+        ? 400
+        : err.code === 'FORBIDDEN'
+          ? 403
+          : 502;
     return json(status, { ok: false, error: err.message });
   }
 }

@@ -43,6 +43,8 @@ describe('redis helpers', () => {
     assert.equal(keys.result('abc'), 'magatest:result:abc');
     assert.equal(keys.leaderboard('algorithms'), 'magatest:lb:algorithms');
     assert.equal(keys.recentAll(), 'magatest:recent:all');
+    assert.equal(keys.accessCode('123456'), 'magatest:access:code:123456');
+    assert.match(keys.accessSession('abc'), /magatest:access:session:abc/);
   });
 
   it('detects missing config', () => {
