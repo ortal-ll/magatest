@@ -441,12 +441,64 @@ export function buildLowpassTFilter() {
 </figure>`;
 }
 
+/** RC charging: 40 V, switch to pos.2, R=0.5 MΩ, C=5 µF, discharge R=1 MΩ. */
+export function buildRcChargeSwitch40v() {
+  return `
+<figure class="q-diagram" aria-label="Заряд конденсатора через ключ">
+  <svg viewBox="0 0 420 280" role="img" class="q-diagram-svg">
+    <!-- 40 V source left -->
+    <circle cx="50" cy="70" r="18" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <line x1="50" y1="58" x2="50" y2="66" stroke="#1a455c" stroke-width="2"/>
+    <line x1="46" y1="62" x2="54" y2="62" stroke="#1a455c" stroke-width="2"/>
+    <line x1="46" y1="78" x2="54" y2="78" stroke="#1a455c" stroke-width="2"/>
+    <text x="28" y="45" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">40 В</text>
+    <line x1="50" y1="88" x2="50" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <line x1="50" y1="220" x2="300" y2="220" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- top from source to switch node -->
+    <line x1="68" y1="70" x2="130" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- switch pivot -->
+    <circle cx="150" cy="70" r="3.5" fill="#1a455c"/>
+    <!-- position 1 open upward-left -->
+    <line x1="150" y1="70" x2="125" y2="42" stroke="#1a455c" stroke-width="2"/>
+    <text x="108" y="38" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1</text>
+    <!-- position 2 (active contact from left) -->
+    <circle cx="130" cy="70" r="2.5" fill="#1a455c"/>
+    <text x="118" y="92" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">2</text>
+    <!-- position 3 down-right to 1 MΩ path -->
+    <line x1="150" y1="70" x2="175" y2="105" stroke="#1a455c" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <text x="178" y="112" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">3</text>
+
+    <!-- from switch to 0.5 MΩ -->
+    <line x1="150" y1="70" x2="200" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <path d="M200,70 L212,56 L224,84 L236,56 L248,84 L260,56 L272,70" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="210" y="48" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">0.5 МОм</text>
+    <line x1="272" y1="70" x2="300" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- capacitor 5 µF -->
+    <line x1="300" y1="70" x2="300" y2="120" stroke="#1a455c" stroke-width="2"/>
+    <line x1="282" y1="120" x2="318" y2="120" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="282" y1="132" x2="318" y2="132" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="300" y1="132" x2="300" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <text x="325" y="130" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">5 мкФ</text>
+
+    <!-- 1 MΩ discharge branch from pos 3 area -->
+    <line x1="175" y1="105" x2="175" y2="150" stroke="#1a455c" stroke-width="2"/>
+    <path d="M175,150 L163,162 L187,174 L163,186 L187,198 L175,210" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="192" y="185" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1 МОм</text>
+    <line x1="175" y1="210" x2="175" y2="220" stroke="#1a455c" stroke-width="2"/>
+  </svg>
+</figure>`;
+}
+
 const DIAGRAMS = {
   'hash-probing-linear-quadratic': buildHashProbingDiagram,
   'dc-motor-mechanical-chars': buildDcMotorMechanicalChars,
   'parallel-rlc-switch': buildParallelRlcSwitch,
   'highpass-t-filter': buildHighpassTFilter,
   'lowpass-t-filter': buildLowpassTFilter,
+  'rc-charge-switch-40v': buildRcChargeSwitch40v,
   'induction-motor-t-circuit': buildInductionMotorTCircuit,
   'sync-armature-reaction-fa': buildSyncArmatureReactionFa,
 };
