@@ -124,6 +124,8 @@ function renderQuestion() {
     text.textContent = opt.text;
 
     btn.append(letter, text);
+    btn.classList.add('option-enter');
+    btn.style.animationDelay = `${80 + i * 55}ms`;
 
     if (q.answered) {
       btn.disabled = true;
@@ -257,14 +259,28 @@ function resetSaveForm() {
   if (els.saveScoreBox) els.saveScoreBox.classList.remove('hidden');
 }
 
+function animatePercent(el, target, duration = 900) {
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = `${Math.round(target * eased)}%`;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function showResults() {
   const score = computeScore(questions);
   lastScore = score;
   els.app.classList.add('hidden');
   els.results.classList.remove('hidden');
+  els.results.classList.remove('reveal');
+  void els.results.offsetWidth;
+  els.results.classList.add('reveal');
   resetSaveForm();
 
-  els.resultsPercent.textContent = `${score.percent}%`;
+  animatePercent(els.resultsPercent, score.percent);
   els.resultsGrade.textContent = gradeLabel(score.percent);
   els.resultsSummary.textContent = `Вы ответили верно на ${score.correct} из ${score.total} вопросов.`;
   els.statCorrect.textContent = String(score.correct);
@@ -277,7 +293,7 @@ function showResults() {
       const selected = q.selectedIndex != null ? q.options[q.selectedIndex]?.text : '—';
       const correct = q.options.find((o) => o.isCorrect)?.text ?? '—';
       return `
-        <li class="review-item ${ok ? 'ok' : 'bad'}">
+        <li class="review-item ${ok ? 'ok' : 'bad'}" style="--i:${i}">
           <div class="mark">${ok ? 'Верно' : 'Ошибка'} · ${i + 1}</div>
           <div><strong>${escapeText(q.text)}</strong></div>
           <div style="margin-top:0.35rem;color:var(--ink-muted)">
@@ -303,6 +319,7 @@ function startQuiz() {
   questions = prepareQuiz(bank.questions);
   currentIndex = 0;
   lastScore = null;
+  els.results.classList.remove('reveal');
   els.results.classList.add('hidden');
   els.app.classList.remove('hidden');
   document.title = `${bank.title} — МагаТест`;

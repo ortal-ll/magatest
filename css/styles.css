@@ -469,7 +469,7 @@ button {
   width: 0%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--teal), #3ec4ae);
-  transition: width 0.35s ease;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .question-card {
@@ -481,17 +481,35 @@ button {
 }
 
 .question-card.swap {
-  animation: qSwap 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: qSwap 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes qSwap {
   from {
     opacity: 0;
-    transform: translateX(26px);
+    transform: translateX(34px) scale(0.985);
+  }
+  60% {
+    opacity: 1;
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
+  }
+}
+
+.option-enter {
+  animation: optIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes optIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -656,7 +674,7 @@ button {
 
 .explanation.show {
   display: block;
-  animation: riseIn 0.35s ease-out both;
+  animation: riseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
 .quiz-nav {
@@ -671,6 +689,29 @@ button {
 .results {
   text-align: center;
   padding: 2rem 1.25rem;
+}
+
+.results.reveal {
+  animation: resultsIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes resultsIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.results.reveal .review-item {
+  animation: optIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.results.reveal .review-item:nth-child(-n + 12) {
+  animation-delay: calc(0.25s + 0.04s * var(--i, 0));
 }
 
 .results-score {
