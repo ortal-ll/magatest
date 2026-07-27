@@ -6,6 +6,7 @@ import {
   buildDcMotorMechanicalChars,
   buildParallelRlcSwitch,
   buildHighpassTFilter,
+  buildLowpassTFilter,
   buildInductionMotorTCircuit,
   buildSyncArmatureReactionFa,
 } from '../js/diagrams.js';
@@ -48,6 +49,12 @@ describe('diagrams', () => {
     assert.match(html, /50 мГн/);
   });
 
+  it('builds low-pass T filter', () => {
+    const html = buildLowpassTFilter();
+    assert.match(html, /100 мГн/);
+    assert.match(html, /0\.2 мкФ/);
+  });
+
   it('builds induction motor T-equivalent circuit', () => {
     const html = buildInductionMotorTCircuit();
     assert.match(html, /r₁/);
@@ -77,6 +84,7 @@ describe('diagrams', () => {
     assert.ok(getDiagramHtml('dc-motor-mechanical-chars').includes('svg'));
     assert.ok(getDiagramHtml('parallel-rlc-switch').includes('svg'));
     assert.ok(getDiagramHtml('highpass-t-filter').includes('svg'));
+    assert.ok(getDiagramHtml('lowpass-t-filter').includes('svg'));
     assert.ok(getDiagramHtml('induction-motor-t-circuit').includes('svg'));
     assert.ok(getDiagramHtml('sync-armature-reaction-fa').includes('svg'));
     assert.equal(getDiagramHtml('unknown'), '');

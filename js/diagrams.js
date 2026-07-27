@@ -396,11 +396,57 @@ export function buildSyncArmatureReactionFa() {
 </figure>`;
 }
 
+/** Low-pass T-section: two series 100 mH, shunt 0.2 µF. */
+export function buildLowpassTFilter() {
+  return `
+<figure class="q-diagram" aria-label="Низкочастотная Т-секция фильтра">
+  <svg viewBox="0 0 480 240" role="img" class="q-diagram-svg">
+    <!-- left terminals -->
+    <circle cx="36" cy="70" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="36" cy="200" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <line x1="41" y1="70" x2="90" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <line x1="41" y1="200" x2="430" y2="200" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- L1 = 100 mH -->
+    <path d="M90,70
+      a12,12 0 0 1 24,0
+      a12,12 0 0 1 24,0
+      a12,12 0 0 1 24,0
+      a12,12 0 0 1 24,0" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="118" y="48" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">100 мГн</text>
+    <line x1="186" y1="70" x2="230" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- midpoint node + capacitor down -->
+    <circle cx="230" cy="70" r="3" fill="#1a455c"/>
+    <line x1="230" y1="70" x2="230" y2="118" stroke="#1a455c" stroke-width="2"/>
+    <line x1="212" y1="118" x2="248" y2="118" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="212" y1="130" x2="248" y2="130" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="230" y1="130" x2="230" y2="200" stroke="#1a455c" stroke-width="2"/>
+    <text x="255" y="128" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">0.2 мкФ</text>
+
+    <!-- L2 = 100 mH -->
+    <line x1="230" y1="70" x2="268" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <path d="M268,70
+      a12,12 0 0 1 24,0
+      a12,12 0 0 1 24,0
+      a12,12 0 0 1 24,0
+      a12,12 0 0 1 24,0" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="296" y="48" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">100 мГн</text>
+    <line x1="364" y1="70" x2="430" y2="70" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- right terminals -->
+    <circle cx="435" cy="70" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="435" cy="200" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+  </svg>
+</figure>`;
+}
+
 const DIAGRAMS = {
   'hash-probing-linear-quadratic': buildHashProbingDiagram,
   'dc-motor-mechanical-chars': buildDcMotorMechanicalChars,
   'parallel-rlc-switch': buildParallelRlcSwitch,
   'highpass-t-filter': buildHighpassTFilter,
+  'lowpass-t-filter': buildLowpassTFilter,
   'induction-motor-t-circuit': buildInductionMotorTCircuit,
   'sync-armature-reaction-fa': buildSyncArmatureReactionFa,
 };
