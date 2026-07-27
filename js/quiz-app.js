@@ -51,6 +51,39 @@ let scoreSaved = false;
 /** @type {'ru' | 'kz'} */
 let quizLang = 'ru';
 
+const UI = {
+  ru: {
+    questionOf: (n, total) => `Вопрос ${n} из ${total}`,
+    questionN: (n) => `Вопрос ${n}`,
+    correctLive: (c, a) => `Верно: ${c} / ${a}`,
+    next: 'Далее',
+    result: 'Результат',
+    back: 'Назад',
+    ok: 'Верно',
+    bad: 'Ошибка',
+    yourAnswer: 'Ваш ответ',
+    rightAnswer: 'Правильно',
+    summary: (c, t) => `Вы ответили верно на ${c} из ${t} вопросов.`,
+  },
+  kz: {
+    questionOf: (n, total) => `Сұрақ ${n} / ${total}`,
+    questionN: (n) => `Сұрақ ${n}`,
+    correctLive: (c, a) => `Дұрыс: ${c} / ${a}`,
+    next: 'Келесі',
+    result: 'Нәтиже',
+    back: 'Артқа',
+    ok: 'Дұрыс',
+    bad: 'Қате',
+    yourAnswer: 'Сіздің жауабыңыз',
+    rightAnswer: 'Дұрысы',
+    summary: (c, t) => `${t} сұрақтың ${c}-іне дұрыс жауап бердіңіз.`,
+  },
+};
+
+function ui() {
+  return UI[quizLang] || UI.ru;
+}
+
 function qText(q) {
   return quizLang === 'kz' && q.textKz ? q.textKz : q.text;
 }
@@ -62,6 +95,11 @@ function optText(opt) {
 function qExplanation(q) {
   if (quizLang === 'kz' && q.explanationKz) return q.explanationKz;
   return q.explanation ?? '';
+}
+
+function bankTitle() {
+  if (!bank) return '';
+  return quizLang === 'kz' && bank.titleKz ? bank.titleKz : bank.title;
 }
 
 function syncLangButtons() {
@@ -87,10 +125,10 @@ function updateProgress() {
   const pct = total === 0 ? 0 : Math.round(((currentIndex + 1) / total) * 100);
 
   if (els.progressText) {
-    els.progressText.textContent = `Вопрос ${currentIndex + 1} из ${total}`;
+    els.progressText.textContent = ui().questionOf(currentIndex + 1, total);
   }
   if (els.scoreLive) {
-    els.scoreLive.textContent = `Верно: ${score.correct} / ${answered}`;
+    els.scoreLive.textContent = ui().correctLive(score.correct, answered);
   }
   if (els.progressFill) {
     els.progressFill.style.width = `${pct}%`;
@@ -114,7 +152,7 @@ function renderQuestion() {
 
   replayCardAnimation();
   syncLangButtons();
-  els.qNum.textContent = `Вопрос ${currentIndex + 1}`;
+  els.qNum.textContent = ui().questionN(currentIndex + 1);
   els.qText.textContent = qText(q);
   els.qExplanation.classList.remove('show');
   els.qExplanation.textContent = '';
@@ -169,9 +207,10 @@ function renderQuestion() {
   }
 
   els.btnPrev.disabled = currentIndex === 0;
+  if (els.btnPrev) els.btnPrev.textContent = ui().back;
   els.btnNext.disabled = !q.answered;
   els.btnNext.textContent =
-    currentIndex === questions.length - 1 ? 'Результат' : 'Далее';
+    currentIndex === questions.length - 1 ? ui().result : ui().next;
 
   updateProgress();
 }
@@ -209,6 +248,12 @@ function setQuizLang(lang) {
     localStorage.setItem('magatest-quiz-lang', lang);
   } catch {
     /* ignore */
+  }
+  if (els.title && bank) els.title.textContent = bankTitle();
+  if (bank) document.title = `${bankTitle()} — МагаТест`;
+  if (questions.length && !els.results?.classList.contains('hidden')) {
+    showResults();
+    return;
   }
   if (questions.length) renderQuestion();
 }
@@ -317,11 +362,12 @@ function showResults() {
 
   animatePercent(els.resultsPercent, score.percent);
   els.resultsGrade.textContent = gradeLabel(score.percent);
-  els.resultsSummary.textContent = `Вы ответили верно на ${score.correct} из ${score.total} вопросов.`;
+  els.resultsSummary.textContent = ui().summary(score.correct, score.total);
   els.statCorrect.textContent = String(score.correct);
   els.statWrong.textContent = String(score.wrong);
   els.statTotal.textContent = String(score.total);
 
+  const t = ui();
   els.reviewList.innerHTML = questions
     .map((q, i) => {
       const ok = q.isCorrect;
@@ -332,11 +378,11 @@ function showResults() {
       const correct = correctOpt ? optText(correctOpt) : '—';
       return `
         <li class="review-item ${ok ? 'ok' : 'bad'}" style="--i:${i}">
-          <div class="mark">${ok ? 'Верно' : 'Ошибка'} · ${i + 1}</div>
+          <div class="mark">${ok ? t.ok : t.bad} · ${i + 1}</div>
           <div><strong>${escapeText(qText(q))}</strong></div>
           <div style="margin-top:0.35rem;color:var(--ink-muted)">
-            Ваш ответ: ${escapeText(selected)}
-            ${ok ? '' : `<br>Правильно: ${escapeText(correct)}`}
+            ${t.yourAnswer}: ${escapeText(selected)}
+            ${ok ? '' : `<br>${t.rightAnswer}: ${escapeText(correct)}`}
           </div>
         </li>`;
     })
@@ -360,8 +406,8 @@ function startQuiz() {
   els.results.classList.remove('reveal');
   els.results.classList.add('hidden');
   els.app.classList.remove('hidden');
-  document.title = `${bank.title} — МагаТест`;
-  els.title.textContent = bank.title;
+  document.title = `${bankTitle()} — МагаТест`;
+  els.title.textContent = bankTitle();
   renderQuestion();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
