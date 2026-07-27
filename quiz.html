@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Прохождение теста — МагаТест." />
+  <title>Тест — МагаТест</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">Мага<em>Тест</em></a>
+      <button class="nav-toggle" type="button" aria-label="Меню" aria-expanded="false" id="navToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="Главное меню">
+        <a href="subject.html?id=m094">Информационные технологии M094</a>
+        <a href="index.html#how">Как работает</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="loading" id="quizLoading">Загрузка теста…</div>
+    <div class="error-box hidden" id="quizError"></div>
+
+    <div id="quizApp" class="hidden">
+      <section class="quiz-top">
+        <p class="quiz-meta" id="quizBack">
+          <a href="subject.html?id=m094" style="color:rgba(255,255,255,0.75)">← К тестам M094</a>
+        </p>
+        <h1 id="quizTitle">Тест</h1>
+        <div class="progress-wrap" aria-live="polite">
+          <div class="progress-label">
+            <span id="progressText">Вопрос 1 из 1</span>
+            <span id="scoreLive">Верно: 0</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="question-card" id="questionCard" aria-live="polite">
+        <div class="q-num" id="qNum">Вопрос 1</div>
+        <p class="q-text" id="qText"></p>
+        <div class="q-diagram-slot" id="qDiagram" hidden></div>
+        <ul class="options" id="qOptions"></ul>
+        <div class="explanation" id="qExplanation"></div>
+        <div class="quiz-nav">
+          <button type="button" class="btn btn-outline" id="btnPrev">Назад</button>
+          <button type="button" class="btn btn-primary" id="btnNext" disabled>Далее</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel results hidden" id="resultsPanel" aria-labelledby="resultsTitle">
+      <h2 class="section-title" id="resultsTitle">Результат</h2>
+      <p class="results-score" id="resultsPercent">0%</p>
+      <p class="results-grade" id="resultsGrade">—</p>
+      <p id="resultsSummary"></p>
+      <div class="results-stats">
+        <div class="stat ok"><strong id="statCorrect">0</strong><span>верно</span></div>
+        <div class="stat bad"><strong id="statWrong">0</strong><span>ошибки</span></div>
+        <div class="stat"><strong id="statTotal">0</strong><span>всего</span></div>
+      </div>
+      <div class="cta-row" style="justify-content:center">
+        <button type="button" class="btn btn-primary" id="btnRetry">Пройти ещё раз</button>
+        <a class="btn btn-secondary" href="subject.html?id=m094">К списку тестов</a>
+      </div>
+
+      <div class="save-score" id="saveScoreBox">
+        <h3 class="save-title">Сохранить результат в облако</h3>
+        <p class="save-hint">Имя и балл запишутся в Upstash Redis (через Netlify).</p>
+        <form class="save-form" id="saveScoreForm">
+          <label class="save-label" for="playerName">Имя</label>
+          <input
+            class="save-input"
+            id="playerName"
+            name="name"
+            type="text"
+            maxlength="40"
+            placeholder="Как вас показать в рейтинге"
+            autocomplete="nickname"
+          />
+          <button type="submit" class="btn btn-secondary" id="btnSaveScore">Сохранить</button>
+        </form>
+        <p class="save-status" id="saveStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="leaderboard-block" id="leaderboardBlock">
+        <h3 class="save-title">Топ по этому тесту</h3>
+        <ul class="leaderboard" id="leaderboardList"></ul>
+      </div>
+
+      <ul class="review-list" id="reviewList" aria-label="Разбор ответов"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    МагаТест — подготовка к магистратуре · Информационные технологии M094
+  </footer>
+
+  <script type="module" src="js/quiz-app.js"></script>
+  <script type="module" src="js/nav.js"></script>
+</body>
+</html>

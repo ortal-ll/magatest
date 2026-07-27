@@ -1,0 +1,16 @@
+{
+  "name": "magatest",
+  "version": "1.0.0",
+  "description": "Подготовка к вступительным тестам в магистратуру M094",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "npx --yes serve . -p 3000",
+    "dev": "npx --yes netlify-cli dev",
+    "build": "node -e \"console.log('static site — no build step')\""
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
