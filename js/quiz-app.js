@@ -79,10 +79,19 @@ function updateProgress() {
   }
 }
 
+function replayCardAnimation() {
+  const card = document.getElementById('questionCard');
+  if (!card) return;
+  card.classList.remove('swap');
+  void card.offsetWidth;
+  card.classList.add('swap');
+}
+
 function renderQuestion() {
   const q = questions[currentIndex];
   if (!q) return;
 
+  replayCardAnimation();
   els.qNum.textContent = `Вопрос ${currentIndex + 1}`;
   els.qText.textContent = q.text;
   els.qExplanation.classList.remove('show');
@@ -150,9 +159,12 @@ function onSelect(optionIndex) {
   buttons.forEach((btn, i) => {
     btn.disabled = true;
     const isCorrectOpt = q.options[i].isCorrect;
-    if (isCorrectOpt) btn.classList.add('correct');
     if (i === result.selectedIndex && !result.isCorrect) btn.classList.add('wrong');
     if (i !== result.selectedIndex && !isCorrectOpt) btn.classList.add('dimmed');
+    if (isCorrectOpt) {
+      // лёгкая задержка, чтобы правильный ответ раскрывался плавно после клика
+      setTimeout(() => btn.classList.add('correct'), result.isCorrect ? 0 : 180);
+    }
   });
 
   if (q.explanation) {
@@ -227,7 +239,7 @@ async function loadLeaderboard() {
   } catch {
     if (els.leaderboardList) {
       els.leaderboardList.innerHTML =
-        '<li class="leaderboard-empty">Рейтинг появится после деплоя на Netlify с Upstash</li>';
+        '<li class="leaderboard-empty">Пока нет результатов</li>';
     }
   }
 }
@@ -318,7 +330,7 @@ async function onSaveScore(event) {
     });
     scoreSaved = true;
     if (els.saveStatus) {
-      els.saveStatus.textContent = 'Сохранено в Redis ✓';
+      els.saveStatus.textContent = 'Сохранено ✓';
       els.saveStatus.classList.remove('is-error');
       els.saveStatus.classList.add('is-ok');
     }
@@ -327,9 +339,7 @@ async function onSaveScore(event) {
   } catch (err) {
     if (els.saveStatus) {
       els.saveStatus.textContent =
-        err.status === 503
-          ? 'База ещё не подключена: задайте Upstash в Netlify Environment Variables'
-          : err.message;
+        err.status === 503 ? 'Не удалось сохранить — попробуйте позже' : err.message;
       els.saveStatus.classList.add('is-error');
       els.saveStatus.classList.remove('is-ok');
     }

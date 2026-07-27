@@ -176,6 +176,21 @@ button {
   overflow: hidden;
 }
 
+.hero-compact {
+  min-height: min(42vh, 360px);
+  align-items: center;
+  text-align: center;
+}
+
+.hero-compact .hero-content {
+  max-width: none;
+  width: 100%;
+}
+
+.hero-compact .cta-row {
+  justify-content: center;
+}
+
 .hero::before {
   content: "";
   position: absolute;
@@ -232,11 +247,16 @@ button {
   padding: 0.85rem 1.35rem;
   border-radius: 12px;
   font-weight: 700;
-  transition: transform 0.18s, background 0.18s, box-shadow 0.18s;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
 .btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .btn-primary {
@@ -248,6 +268,7 @@ button {
 .btn-primary:hover,
 .btn-primary:focus-visible {
   background: var(--accent-hover);
+  box-shadow: 0 14px 30px rgba(224, 122, 61, 0.45);
   outline: none;
 }
 
@@ -459,6 +480,21 @@ button {
   animation: riseIn 0.4s ease-out both;
 }
 
+.question-card.swap {
+  animation: qSwap 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes qSwap {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .q-num {
   font-size: 0.82rem;
   font-weight: 700;
@@ -541,13 +577,20 @@ button {
   border: 1.5px solid var(--line);
   background: #fafcfd;
   text-align: left;
-  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  transition: background 0.3s ease, border-color 0.3s ease,
+    transform 0.2s ease, opacity 0.35s ease, box-shadow 0.25s ease;
   cursor: pointer;
 }
 
 .option:hover:not(:disabled) {
   border-color: rgba(31, 138, 122, 0.5);
   background: #f3faf8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(10, 31, 46, 0.08);
+}
+
+.option:active:not(:disabled) {
+  transform: scale(0.99);
 }
 
 .option:focus-visible {
@@ -570,12 +613,14 @@ button {
   background: var(--surface);
   color: var(--ink-muted);
   flex-shrink: 0;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .option.correct {
   background: var(--correct-bg);
   border-color: var(--correct);
-  animation: pulseCorrect 0.45s ease;
+  animation: pulseCorrect 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 6px 18px rgba(31, 122, 76, 0.18);
 }
 
 .option.correct .option-letter {
@@ -595,7 +640,8 @@ button {
 }
 
 .option.dimmed {
-  opacity: 0.55;
+  opacity: 0.45;
+  transform: scale(0.995);
 }
 
 .explanation {
