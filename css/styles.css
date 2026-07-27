@@ -513,12 +513,16 @@ button {
   }
 }
 
-.q-head {
+.quiz-top-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.55rem;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.quiz-top-row h1 {
+  margin: 0;
 }
 
 .q-num {
@@ -527,7 +531,7 @@ button {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--teal);
-  margin: 0;
+  margin: 0 0 0.55rem;
 }
 
 .lang-toggle {
@@ -536,6 +540,12 @@ button {
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.lang-toggle--on-dark {
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .lang-btn {
@@ -544,17 +554,27 @@ button {
   background: transparent;
   color: var(--muted, #5a7280);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.04em;
-  padding: 0.28rem 0.55rem;
+  padding: 0.4rem 0.7rem;
   cursor: pointer;
   line-height: 1;
+  min-width: 2.5rem;
+}
+
+.lang-toggle--on-dark .lang-btn {
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .lang-btn.is-active {
   background: var(--teal);
   color: #fff;
+}
+
+.lang-toggle--on-dark .lang-btn.is-active {
+  background: #fff;
+  color: var(--ink, #0e2433);
 }
 
 .lang-btn:focus-visible {

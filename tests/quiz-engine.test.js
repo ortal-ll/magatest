@@ -200,6 +200,12 @@ describe('question banks integrity', async () => {
         if (q.explanationKz != null) {
           assert.equal(typeof q.explanationKz, 'string', `q${i} explanationKz`);
         }
+        // Full bilingual coverage required for all banks
+        assert.equal(typeof q.textKz, 'string', `q${i} requires textKz`);
+        assert.ok(
+          Array.isArray(q.optionsKz) && q.optionsKz.length === q.options.length,
+          `q${i} requires optionsKz`
+        );
       }
 
       // Engine accepts the bank

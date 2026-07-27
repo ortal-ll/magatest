@@ -9,6 +9,8 @@ import { saveResult, fetchResults } from './api.js';
 import { getDiagramHtml } from './diagrams.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+/** Bump when question banks change so browsers/CDN refetch JSON. */
+const DATA_VERSION = 'kz-full-1';
 
 const els = {
   loading: document.getElementById('quizLoading'),
@@ -51,23 +53,90 @@ let scoreSaved = false;
 /** @type {'ru' | 'kz'} */
 let quizLang = 'ru';
 
+const UI = {
+  ru: {
+    questionOf: (n, total) => `Вопрос ${n} из ${total}`,
+    questionN: (n) => `Вопрос ${n}`,
+    correctLive: (c, a) => `Верно: ${c} / ${a}`,
+    next: 'Далее',
+    result: 'Результат',
+    back: 'Назад',
+    ok: 'Верно',
+    bad: 'Ошибка',
+    yourAnswer: 'Ваш ответ',
+    rightAnswer: 'Правильно',
+    summary: (c, t) => `Вы ответили верно на ${c} из ${t} вопросов.`,
+  },
+  kz: {
+    questionOf: (n, total) => `Сұрақ ${n} / ${total}`,
+    questionN: (n) => `Сұрақ ${n}`,
+    correctLive: (c, a) => `Дұрыс: ${c} / ${a}`,
+    next: 'Келесі',
+    result: 'Нәтиже',
+    back: 'Артқа',
+    ok: 'Дұрыс',
+    bad: 'Қате',
+    yourAnswer: 'Сіздің жауабыңыз',
+    rightAnswer: 'Дұрысы',
+    summary: (c, t) => `${t} сұрақтың ${c}-іне дұрыс жауап бердіңіз.`,
+  },
+};
+
+function ui() {
+  return UI[quizLang] || UI.ru;
+}
+
 function qText(q) {
-  return quizLang === 'kz' && q.textKz ? q.textKz : q.text;
+  if (quizLang === 'kz') {
+    return q.textKz || q.text;
+  }
+  return q.text;
 }
 
 function optText(opt) {
-  return quizLang === 'kz' && opt.textKz ? opt.textKz : opt.text;
+  if (quizLang === 'kz') {
+    return opt.textKz || opt.text;
+  }
+  return opt.text;
 }
 
 function qExplanation(q) {
-  if (quizLang === 'kz' && q.explanationKz) return q.explanationKz;
+  if (quizLang === 'kz') {
+    return q.explanationKz || q.explanation || '';
+  }
   return q.explanation ?? '';
+}
+
+function bankTitle() {
+  if (!bank) return '';
+  if (quizLang === 'kz') return bank.titleKz || bank.title;
+  return bank.title;
 }
 
 function syncLangButtons() {
   document.querySelectorAll('.lang-btn').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.lang === quizLang);
+    const active = btn.dataset.lang === quizLang;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
+  document.documentElement.lang = quizLang === 'kz' ? 'kk' : 'ru';
+}
+
+function applyChromeLang() {
+  syncLangButtons();
+  if (els.title && bank) els.title.textContent = bankTitle();
+  if (bank) document.title = `${bankTitle()} — МагаТест`;
+  const backLink = document.querySelector('#quizBack a');
+  if (backLink) {
+    backLink.textContent =
+      quizLang === 'kz' ? '← M094 тесттеріне' : '← К тестам M094';
+  }
+  updateProgress();
+  if (els.btnPrev) els.btnPrev.textContent = ui().back;
+  if (els.btnNext) {
+    els.btnNext.textContent =
+      currentIndex >= questions.length - 1 ? ui().result : ui().next;
+  }
 }
 
 function showError(message) {
@@ -87,10 +156,10 @@ function updateProgress() {
   const pct = total === 0 ? 0 : Math.round(((currentIndex + 1) / total) * 100);
 
   if (els.progressText) {
-    els.progressText.textContent = `Вопрос ${currentIndex + 1} из ${total}`;
+    els.progressText.textContent = ui().questionOf(currentIndex + 1, total);
   }
   if (els.scoreLive) {
-    els.scoreLive.textContent = `Верно: ${score.correct} / ${answered}`;
+    els.scoreLive.textContent = ui().correctLive(score.correct, answered);
   }
   if (els.progressFill) {
     els.progressFill.style.width = `${pct}%`;
@@ -108,13 +177,13 @@ function replayCardAnimation() {
   card.classList.add('swap');
 }
 
-function renderQuestion() {
+function renderQuestion({ animate = true } = {}) {
   const q = questions[currentIndex];
   if (!q) return;
 
-  replayCardAnimation();
-  syncLangButtons();
-  els.qNum.textContent = `Вопрос ${currentIndex + 1}`;
+  if (animate) replayCardAnimation();
+  applyChromeLang();
+  els.qNum.textContent = ui().questionN(currentIndex + 1);
   els.qText.textContent = qText(q);
   els.qExplanation.classList.remove('show');
   els.qExplanation.textContent = '';
@@ -146,8 +215,10 @@ function renderQuestion() {
     text.textContent = optText(opt);
 
     btn.append(letter, text);
-    btn.classList.add('option-enter');
-    btn.style.animationDelay = `${80 + i * 55}ms`;
+    if (animate) {
+      btn.classList.add('option-enter');
+      btn.style.animationDelay = `${80 + i * 55}ms`;
+    }
 
     if (q.answered) {
       btn.disabled = true;
@@ -171,9 +242,7 @@ function renderQuestion() {
   els.btnPrev.disabled = currentIndex === 0;
   els.btnNext.disabled = !q.answered;
   els.btnNext.textContent =
-    currentIndex === questions.length - 1 ? 'Результат' : 'Далее';
-
-  updateProgress();
+    currentIndex === questions.length - 1 ? ui().result : ui().next;
 }
 
 function onSelect(optionIndex) {
@@ -204,13 +273,22 @@ function onSelect(optionIndex) {
 
 function setQuizLang(lang) {
   if (lang !== 'ru' && lang !== 'kz') return;
+  if (quizLang === lang) {
+    applyChromeLang();
+    return;
+  }
   quizLang = lang;
   try {
     localStorage.setItem('magatest-quiz-lang', lang);
   } catch {
     /* ignore */
   }
-  if (questions.length) renderQuestion();
+  applyChromeLang();
+  if (questions.length && els.results && !els.results.classList.contains('hidden')) {
+    showResults();
+    return;
+  }
+  if (questions.length) renderQuestion({ animate: false });
 }
 
 function goNext() {
@@ -317,11 +395,12 @@ function showResults() {
 
   animatePercent(els.resultsPercent, score.percent);
   els.resultsGrade.textContent = gradeLabel(score.percent);
-  els.resultsSummary.textContent = `Вы ответили верно на ${score.correct} из ${score.total} вопросов.`;
+  els.resultsSummary.textContent = ui().summary(score.correct, score.total);
   els.statCorrect.textContent = String(score.correct);
   els.statWrong.textContent = String(score.wrong);
   els.statTotal.textContent = String(score.total);
 
+  const t = ui();
   els.reviewList.innerHTML = questions
     .map((q, i) => {
       const ok = q.isCorrect;
@@ -332,11 +411,11 @@ function showResults() {
       const correct = correctOpt ? optText(correctOpt) : '—';
       return `
         <li class="review-item ${ok ? 'ok' : 'bad'}" style="--i:${i}">
-          <div class="mark">${ok ? 'Верно' : 'Ошибка'} · ${i + 1}</div>
+          <div class="mark">${ok ? t.ok : t.bad} · ${i + 1}</div>
           <div><strong>${escapeText(qText(q))}</strong></div>
           <div style="margin-top:0.35rem;color:var(--ink-muted)">
-            Ваш ответ: ${escapeText(selected)}
-            ${ok ? '' : `<br>Правильно: ${escapeText(correct)}`}
+            ${t.yourAnswer}: ${escapeText(selected)}
+            ${ok ? '' : `<br>${t.rightAnswer}: ${escapeText(correct)}`}
           </div>
         </li>`;
     })
@@ -360,8 +439,8 @@ function startQuiz() {
   els.results.classList.remove('reveal');
   els.results.classList.add('hidden');
   els.app.classList.remove('hidden');
-  document.title = `${bank.title} — МагаТест`;
-  els.title.textContent = bank.title;
+  document.title = `${bankTitle()} — МагаТест`;
+  els.title.textContent = bankTitle();
   renderQuestion();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -417,7 +496,11 @@ async function init() {
   }
 
   try {
-    const res = await fetch(`data/${encodeURIComponent(id)}.json`);
+    // Cache-bust so language packs in JSON are not stuck on an old CDN copy
+    const res = await fetch(
+      `data/${encodeURIComponent(id)}.json?v=${encodeURIComponent(DATA_VERSION)}`,
+      { cache: 'no-cache' }
+    );
     if (!res.ok) throw new Error('Тест не найден');
     bank = await res.json();
     if (!bank.questions?.length) throw new Error('В тесте нет вопросов');
@@ -433,7 +516,14 @@ els.btnNext?.addEventListener('click', goNext);
 els.btnPrev?.addEventListener('click', goPrev);
 els.btnRetry?.addEventListener('click', startQuiz);
 els.saveScoreForm?.addEventListener('submit', onSaveScore);
-document.getElementById('langRu')?.addEventListener('click', () => setQuizLang('ru'));
-document.getElementById('langKz')?.addEventListener('click', () => setQuizLang('kz'));
+
+document.querySelectorAll('.lang-toggle').forEach((toggle) => {
+  toggle.addEventListener('click', (event) => {
+    const btn = event.target.closest('.lang-btn');
+    if (!btn || !toggle.contains(btn)) return;
+    event.preventDefault();
+    setQuizLang(btn.dataset.lang);
+  });
+});
 
 init();
