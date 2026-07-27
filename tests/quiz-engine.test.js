@@ -92,6 +92,36 @@ describe('prepareQuiz', () => {
     );
     assert.equal(prepared[0].diagramId, 'hash-probing-linear-quadratic');
   });
+
+  it('keeps Kazakh fields and syncs optionsKz with shuffle', () => {
+    const prepared = prepareQuiz(
+      [
+        {
+          text: 'RU question',
+          textKz: 'KZ question',
+          options: ['один', 'два', 'три'],
+          optionsKz: ['бір', 'екі', 'үш'],
+          correct: 1,
+          explanation: 'RU explain',
+          explanationKz: 'KZ explain',
+        },
+      ],
+      seededRandom(5)
+    );
+    const q = prepared[0];
+    assert.equal(q.text, 'RU question');
+    assert.equal(q.textKz, 'KZ question');
+    assert.equal(q.explanationKz, 'KZ explain');
+    assert.equal(q.options.length, 3);
+    for (const opt of q.options) {
+      if (opt.text === 'один') assert.equal(opt.textKz, 'бір');
+      if (opt.text === 'два') {
+        assert.equal(opt.textKz, 'екі');
+        assert.equal(opt.isCorrect, true);
+      }
+      if (opt.text === 'три') assert.equal(opt.textKz, 'үш');
+    }
+  });
 });
 
 describe('answerQuestion', () => {
@@ -162,6 +192,14 @@ describe('question banks integrity', async () => {
             q.correct < q.options.length,
           `q${i} correct`
         );
+        if (q.textKz != null) assert.equal(typeof q.textKz, 'string', `q${i} textKz`);
+        if (q.optionsKz != null) {
+          assert.ok(Array.isArray(q.optionsKz), `q${i} optionsKz array`);
+          assert.equal(q.optionsKz.length, q.options.length, `q${i} optionsKz length`);
+        }
+        if (q.explanationKz != null) {
+          assert.equal(typeof q.explanationKz, 'string', `q${i} explanationKz`);
+        }
       }
 
       // Engine accepts the bank

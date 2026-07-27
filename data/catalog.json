@@ -11,14 +11,14 @@
           "id": "algorithms",
           "title": "Алгоритмы и структуры данных",
           "topic": "Алгоритмы и структуры данных",
-          "count": 110,
+          "count": 137,
           "file": "algorithms.json"
         },
         {
           "id": "databases",
           "title": "Базы данных (СУБД)",
           "topic": "Базы данных",
-          "count": 20,
+          "count": 40,
           "file": "databases.json"
         }
       ]

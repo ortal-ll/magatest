@@ -224,6 +224,472 @@
       ],
       "correct": 1,
       "explanation": "Функция AVG() вычисляет среднее значение. Правильный синтаксис: SELECT AVG(имя_столбца) FROM имя_таблицы."
+    },
+    {
+      "text": "Вид отношения в базе данных между преподавателями и студентами",
+      "textKz": "Оқытушылар мен студенттер арасындағы деректер қорындағы қатынас түрі",
+      "options": [
+        "0:1",
+        "1:1",
+        "1:3",
+        "1:0",
+        "2:1",
+        "M:M",
+        "2:M",
+        "3:1"
+      ],
+      "optionsKz": [
+        "0:1",
+        "1:1",
+        "1:3",
+        "1:0",
+        "2:1",
+        "M:M",
+        "2:M",
+        "3:1"
+      ],
+      "correct": 5,
+      "explanation": "Один преподаватель ведёт многих студентов, один студент учится у многих преподавателей — связь «многие ко многим» (M:M).",
+      "explanationKz": "Бір оқытушы көп студент оқытады, бір студент көп оқытушыдан оқиды — «көпке-көп» (M:M) байланысы."
+    },
+    {
+      "text": "Название таблицы из следующего кода\ncreate table calc (x int, y int);\ninsert into calc values (5, 45);\nselect *from calc x, y, x+y;",
+      "textKz": "Келесі кодтағы кесте атауы\ncreate table calc (x int, y int);\ninsert into calc values (5, 45);\nselect *from calc x, y, x+y;",
+      "options": [
+        "values",
+        "int",
+        "y",
+        "calc",
+        "*",
+        "x",
+        "table"
+      ],
+      "optionsKz": [
+        "values",
+        "int",
+        "y",
+        "calc",
+        "*",
+        "x",
+        "table"
+      ],
+      "correct": 3,
+      "explanation": "CREATE TABLE calc … создаёт таблицу с именем calc.",
+      "explanationKz": "CREATE TABLE calc … calc атауымен кесте жасайды."
+    },
+    {
+      "text": "Действие, выполняемое следующей функцией sum(sales)",
+      "textKz": "sum(sales) функциясы орындайтын әрекет",
+      "options": [
+        "вывод минимума строки sales",
+        "вывод среднего значения столбца sales",
+        "вывод среднего значения строки sales",
+        "вывод суммы столбца sales",
+        "вывод среднего значения переменной sales",
+        "вывод среднего значения таблицы sales"
+      ],
+      "optionsKz": [
+        "sales жолының минимумын шығару",
+        "sales бағанының орташа мәнін шығару",
+        "sales жолының орташа мәнін шығару",
+        "sales бағанының қосындысын шығару",
+        "sales айнымалысының орташа мәнін шығару",
+        "sales кестесінің орташа мәнін шығару"
+      ],
+      "correct": 3,
+      "explanation": "SUM() — агрегатная функция, возвращающая сумму значений столбца.",
+      "explanationKz": "SUM() — баған мәндерінің қосындысын қайтаратын агрегаттық функция."
+    },
+    {
+      "text": "Результат выполнения следующей команды для данной таблицы\nselect salary\nfrom table\nwhere city = 'Almaty'\n\nname | city | salary\nAigerim | Almaty | 50\nBauyrzhan | Almaty | 60\nGulzhan | Arkalyk | 70\nSamat | Moscow | 80",
+      "textKz": "Келесі команданың берілген кесте үшін орындалу нәтижесі\nselect salary\nfrom table\nwhere city = 'Almaty'\n\nname | city | salary\nAigerim | Almaty | 50\nBauyrzhan | Almaty | 60\nGulzhan | Arkalyk | 70\nSamat | Moscow | 80",
+      "options": [
+        "50, 60, 70, 80",
+        "60, 70, 80",
+        "50, 60",
+        "80",
+        "70",
+        "50"
+      ],
+      "optionsKz": [
+        "50, 60, 70, 80",
+        "60, 70, 80",
+        "50, 60",
+        "80",
+        "70",
+        "50"
+      ],
+      "correct": 2,
+      "explanation": "WHERE city = 'Almaty' отбирает Aigerim (50) и Bauyrzhan (60).",
+      "explanationKz": "WHERE city = 'Almaty' Aigerim (50) және Bauyrzhan (60) жолдарын іріктейді."
+    },
+    {
+      "text": "Правильный синтаксис написания кода на SQL",
+      "textKz": "SQL тілінде код жазудың дұрыс синтаксисі",
+      "options": [
+        "select from *data",
+        "select data from students",
+        "select *data from students",
+        "select from data",
+        "select *from data",
+        "select from students",
+        "select *stud from data",
+        "select data*students from"
+      ],
+      "optionsKz": [
+        "select from *data",
+        "select data from students",
+        "select *data from students",
+        "select from data",
+        "select *from data",
+        "select from students",
+        "select *stud from data",
+        "select data*students from"
+      ],
+      "correct": 1,
+      "explanation": "Корректный шаблон: SELECT столбец FROM таблица. Вариант select data from students синтаксически верен.",
+      "explanationKz": "Дұрыс үлгі: SELECT баған FROM кесте. select data from students синтаксистік тұрғыдан дұрыс."
+    },
+    {
+      "text": "Применить функцию агрегации avg к следующему массиву данных: {1, 5, 6, 7, 8, 3, 10, 0}",
+      "textKz": "Келесі деректер массивіне avg агрегаттық функциясын қолдану: {1, 5, 6, 7, 8, 3, 10, 0}",
+      "options": [
+        "40",
+        "42",
+        "5",
+        "41",
+        "7",
+        "43"
+      ],
+      "optionsKz": [
+        "40",
+        "42",
+        "5",
+        "41",
+        "7",
+        "43"
+      ],
+      "correct": 2,
+      "explanation": "AVG = (1+5+6+7+8+3+10+0)/8 = 40/8 = 5.",
+      "explanationKz": "AVG = (1+5+6+7+8+3+10+0)/8 = 40/8 = 5."
+    },
+    {
+      "text": "Какие операции можно применять к базам данных?",
+      "textKz": "Деректер қорына қандай операцияларды қолдануға болады?",
+      "options": [
+        "форматирование, сжатие, корреляция",
+        "обновление, удаление, создание",
+        "систематизация, оптимизация, корреляция",
+        "форматирование, сжатие, систематизация"
+      ],
+      "optionsKz": [
+        "форматтау, сығу, корреляция",
+        "жаңарту, жою, құру",
+        "жүйелеу, оңтайландыру, корреляция",
+        "форматтау, сығу, жүйелеу"
+      ],
+      "correct": 1,
+      "explanation": "Базовые операции над БД: создание, обновление, удаление (и чтение).",
+      "explanationKz": "ДҚ-ның негізгі операциялары: құру, жаңарту, жою (және оқу)."
+    },
+    {
+      "text": "Архитектура ANSI/SPARC включает следующие уровни",
+      "textKz": "ANSI/SPARC архитектурасы келесі деңгейлерді қамтиды",
+      "options": [
+        "внешний, концептуальный, внутренний",
+        "внешний, концептуальный",
+        "концептуальный, внутренний",
+        "внешний, средний, внутренний",
+        "внешний, внутренний",
+        "внешний, промежуточный, внутренний",
+        "внешний, промежуточный, концептуальный, внутренний"
+      ],
+      "optionsKz": [
+        "сыртқы, концептуалды, ішкі",
+        "сыртқы, концептуалды",
+        "концептуалды, ішкі",
+        "сыртқы, орта, ішкі",
+        "сыртқы, ішкі",
+        "сыртқы, аралық, ішкі",
+        "сыртқы, аралық, концептуалды, ішкі"
+      ],
+      "correct": 0,
+      "explanation": "Трёхуровневая архитектура ANSI/SPARC: внешний, концептуальный, внутренний.",
+      "explanationKz": "ANSI/SPARC үш деңгейлі архитектурасы: сыртқы, концептуалды, ішкі."
+    },
+    {
+      "text": "Применение денормализации влечёт",
+      "textKz": "Денормализацияны қолдану неге әкеледі",
+      "options": [
+        "понижение производительности",
+        "фильтрацию данных",
+        "удаление всех данных",
+        "группировку данных",
+        "нормализацию данных",
+        "повышение производительности",
+        "выполнение запросов"
+      ],
+      "optionsKz": [
+        "өнімділіктің төмендеуі",
+        "деректерді сүзу",
+        "барлық деректерді жою",
+        "деректерді топтау",
+        "деректерді нормализациялау",
+        "өнімділіктің артуы",
+        "сұраныстарды орындау"
+      ],
+      "correct": 5,
+      "explanation": "Денормализация сознательно допускает избыточность ради ускорения чтения/запросов.",
+      "explanationKz": "Денормализация оқу/сұраныстарды жылдамдату үшін артықшылықты саналы түрде рұқсат етеді."
+    },
+    {
+      "text": "Выражение, описывающее правило объединения",
+      "textKz": "Біріктіру ережесін сипаттайтын өрнек",
+      "options": [
+        "if a→b and a→c, then a→bc",
+        "if a→b or a→c, then a→bc",
+        "if a→b and a→c, then a→c, a→b",
+        "if a→b or b→c, then a→c",
+        "if a→by, then a→b and a→y",
+        "if a→b and b→c, then a→c"
+      ],
+      "optionsKz": [
+        "if a→b and a→c, then a→bc",
+        "if a→b or a→c, then a→bc",
+        "if a→b and a→c, then a→c, a→b",
+        "if a→b or b→c, then a→c",
+        "if a→by, then a→b and a→y",
+        "if a→b and b→c, then a→c"
+      ],
+      "correct": 0,
+      "explanation": "Правило объединения (union) Армстронга: из a→b и a→c следует a→bc.",
+      "explanationKz": "Армстронгтың біріктіру (union) ережесі: a→b және a→c болса, a→bc шығады."
+    },
+    {
+      "text": "Архитектура ANSI/SPARC содержит уровни",
+      "textKz": "ANSI/SPARC архитектурасы қамтитын деңгейлер",
+      "options": [
+        "серверный, логический, клиентский",
+        "внутренний, внешний, концептуальный",
+        "средний, промежуточный, логический",
+        "клиентский, серверный, средний"
+      ],
+      "optionsKz": [
+        "серверлік, логикалық, клиенттік",
+        "ішкі, сыртқы, концептуалды",
+        "орта, аралық, логикалық",
+        "клиенттік, серверлік, орта"
+      ],
+      "correct": 1,
+      "explanation": "Уровни ANSI/SPARC: внешний, концептуальный, внутренний.",
+      "explanationKz": "ANSI/SPARC деңгейлері: сыртқы, концептуалды, ішкі."
+    },
+    {
+      "text": "Для упорядочивания по алфавиту используется следующая команда",
+      "textKz": "Әліпби бойынша реттеу үшін келесі команда қолданылады",
+      "options": [
+        "filter by",
+        "from A to Z",
+        "filter on",
+        "between A to Z",
+        "list",
+        "change from A to Z",
+        "join",
+        "order by"
+      ],
+      "optionsKz": [
+        "filter by",
+        "from A to Z",
+        "filter on",
+        "between A to Z",
+        "list",
+        "change from A to Z",
+        "join",
+        "order by"
+      ],
+      "correct": 7,
+      "explanation": "ORDER BY сортирует результат запроса, в том числе по алфавиту.",
+      "explanationKz": "ORDER BY сұраныс нәтижесін, соның ішінде әліпби бойынша реттейді."
+    },
+    {
+      "text": "Архитектура ANSI/SPARC не включает следующие уровни",
+      "textKz": "ANSI/SPARC архитектурасы келесі деңгейлерді қамтымайды",
+      "options": [
+        "внутренний, концептуальный, внешний",
+        "логический, промежуточный, серверный, клиентский, средний",
+        "внешний, концептуальный",
+        "внутренний, внешний"
+      ],
+      "optionsKz": [
+        "ішкі, концептуалды, сыртқы",
+        "логикалық, аралық, серверлік, клиенттік, орта",
+        "сыртқы, концептуалды",
+        "ішкі, сыртқы"
+      ],
+      "correct": 1,
+      "explanation": "В ANSI/SPARC нет уровней «логический», «промежуточный», «серверный», «клиентский», «средний».",
+      "explanationKz": "ANSI/SPARC-та «логикалық», «аралық», «серверлік», «клиенттік», «орта» деңгейлері жоқ."
+    },
+    {
+      "text": "Результат выполнения следующей команды\ncreate table stud (x int, y int);\ninsert into stud values (10, 45);\ninsert into stud values (20, 70);\ninsert into stud values (30, 90);\ncreate table stud2 (x int, y int);\ninsert into stud2 values (10, 450);\ninsert into stud2 values (40, 900);\nSelect * from stud\njoin stud2\non stud.x = stud2.x",
+      "textKz": "Келесі команданың орындалу нәтижесі\ncreate table stud (x int, y int);\ninsert into stud values (10, 45);\ninsert into stud values (20, 70);\ninsert into stud values (30, 90);\ncreate table stud2 (x int, y int);\ninsert into stud2 values (10, 450);\ninsert into stud2 values (40, 900);\nSelect * from stud\njoin stud2\non stud.x = stud2.x",
+      "options": [
+        "10 45 450",
+        "10 45 10 450",
+        "stud, stud2",
+        "45 70 90 450 900",
+        "10 20 30 40 45 70 90 450 900",
+        "10 20 30 40"
+      ],
+      "optionsKz": [
+        "10 45 450",
+        "10 45 10 450",
+        "stud, stud2",
+        "45 70 90 450 900",
+        "10 20 30 40 45 70 90 450 900",
+        "10 20 30 40"
+      ],
+      "correct": 1,
+      "explanation": "INNER JOIN по x совпадает только для x=10 → строка 10, 45, 10, 450.",
+      "explanationKz": "x бойынша INNER JOIN тек x=10 үшін сәйкес келеді → жол 10, 45, 10, 450."
+    },
+    {
+      "text": "Внесение изменений в БД на языке запросов SQL осуществляется посредством следующих команд",
+      "textKz": "SQL сұраныс тілінде ДҚ-ға өзгерістер енгізу келесі командалар арқылы жүзеге асырылады",
+      "options": [
+        "where, view, select",
+        "insert, delete, update",
+        "between, select, view",
+        "where, between, select"
+      ],
+      "optionsKz": [
+        "where, view, select",
+        "insert, delete, update",
+        "between, select, view",
+        "where, between, select"
+      ],
+      "correct": 1,
+      "explanation": "DML для изменения данных: INSERT, UPDATE, DELETE.",
+      "explanationKz": "Деректерді өзгертуге арналған DML: INSERT, UPDATE, DELETE."
+    },
+    {
+      "text": "Вывести все данные из таблицы emp на языке SQL\n\nid | name | city | salary\n01 | Almat | Semey | 1500\n02 | Arman | Taldykorgan | 1800\n03 | Zhania | Shimkent | 2000",
+      "textKz": "emp кестесінен барлық деректерді SQL тілінде шығару\n\nid | name | city | salary\n01 | Almat | Semey | 1500\n02 | Arman | Taldykorgan | 1800\n03 | Zhania | Shimkent | 2000",
+      "options": [
+        "select from table emp *",
+        "select id, name, city, salary from table emp",
+        "select from table *emp",
+        "select * from table emp where name= 'Arman'",
+        "select * from table emp where salary > 1500",
+        "select * from table emp",
+        "select from* table emp"
+      ],
+      "optionsKz": [
+        "select from table emp *",
+        "select id, name, city, salary from table emp",
+        "select from table *emp",
+        "select * from table emp where name= 'Arman'",
+        "select * from table emp where salary > 1500",
+        "select * from table emp",
+        "select from* table emp"
+      ],
+      "correct": 5,
+      "explanation": "SELECT * FROM … возвращает все столбцы и все строки без фильтра.",
+      "explanationKz": "SELECT * FROM … сүзгісіз барлық бағандар мен жолдарды қайтарады."
+    },
+    {
+      "text": "Виды строчных данных в работе с БД",
+      "textKz": "ДҚ жұмысындағы жолдық деректер түрлері",
+      "options": [
+        "{4,6,8,6,0,10}",
+        "'stud', 'string'",
+        "null",
+        "true, false",
+        "1, 2.6, 'stud'",
+        "2, 4, 8",
+        "unknown"
+      ],
+      "optionsKz": [
+        "{4,6,8,6,0,10}",
+        "'stud', 'string'",
+        "null",
+        "true, false",
+        "1, 2.6, 'stud'",
+        "2, 4, 8",
+        "unknown"
+      ],
+      "correct": 1,
+      "explanation": "Строковые литералы в SQL записываются в одинарных кавычках: 'stud', 'string'.",
+      "explanationKz": "SQL-де жолдық литералдар бір тырнақшада жазылады: 'stud', 'string'."
+    },
+    {
+      "text": "Увеличить заработную плату таблице employers на 20 процентов с использованием команд SQL",
+      "textKz": "employers кестесіндегі жалақыны SQL командаларымен 20 пайызға арттыру",
+      "options": [
+        "set employers salary * 1.2",
+        "set employers update salary= salary * 1.2",
+        "update employers insert salary = salary * 1.2",
+        "insert salary = salary * 1.2",
+        "update employers and insert salary = salary * 1.2",
+        "update employers set salary= salary * 1.2"
+      ],
+      "optionsKz": [
+        "set employers salary * 1.2",
+        "set employers update salary= salary * 1.2",
+        "update employers insert salary = salary * 1.2",
+        "insert salary = salary * 1.2",
+        "update employers and insert salary = salary * 1.2",
+        "update employers set salary= salary * 1.2"
+      ],
+      "correct": 5,
+      "explanation": "UPDATE таблица SET столбец = выражение — стандартный синтаксис изменения.",
+      "explanationKz": "UPDATE кесте SET баған = өрнек — өзгертудің стандартты синтаксисі."
+    },
+    {
+      "text": "Увеличить заработную плату для тех, у кого она не превышает 80000 в таблице employers на 20 процентов с использованием команд SQL",
+      "textKz": "employers кестесінде жалақысы 80000-нан аспайтындар үшін жалақыны SQL командаларымен 20 пайызға арттыру",
+      "options": [
+        "update salary = salary * 1.2 where salary < 80000",
+        "set employers update salary = salary * 1.2 where salary < 80000",
+        "insert salary = salary * 1.2 where salary < 80000",
+        "update employers set salary = salary * 1.2 where salary < 80000",
+        "select * from emloyers where salary < 80000 insert salary = salary * 1.2",
+        "insert salary = salary * 1.2 where salary < 80000; update"
+      ],
+      "optionsKz": [
+        "update salary = salary * 1.2 where salary < 80000",
+        "set employers update salary = salary * 1.2 where salary < 80000",
+        "insert salary = salary * 1.2 where salary < 80000",
+        "update employers set salary = salary * 1.2 where salary < 80000",
+        "select * from emloyers where salary < 80000 insert salary = salary * 1.2",
+        "insert salary = salary * 1.2 where salary < 80000; update"
+      ],
+      "correct": 3,
+      "explanation": "Нужны UPDATE … SET … WHERE. Среди вариантов корректен update employers set salary = salary * 1.2 where salary < 80000.",
+      "explanationKz": "UPDATE … SET … WHERE керек. Нұсқалардың ішінде дұрысы: update employers set salary = salary * 1.2 where salary < 80000."
+    },
+    {
+      "text": "Вывести список студентов 2,3,4-курсов или специальности «Туризм»",
+      "textKz": "2,3,4-курс студенттерінің немесе «Туризм» мамандығының тізімін шығару",
+      "options": [
+        "select name from stud where speciality = Tourism or course > '1'",
+        "select name from stud where speciality = 'Tourism' and course > 1",
+        "select name from stud where speciality = 'Tourism' or course > '1'",
+        "select name from stud where speciality = 'Tourism'; select name from stud where course > 1",
+        "select name from stud where speciality = Tourism and course > 1",
+        "select name from stud where speciality = 'Tourism' or course > 1"
+      ],
+      "optionsKz": [
+        "select name from stud where speciality = Tourism or course > '1'",
+        "select name from stud where speciality = 'Tourism' and course > 1",
+        "select name from stud where speciality = 'Tourism' or course > '1'",
+        "select name from stud where speciality = 'Tourism'; select name from stud where course > 1",
+        "select name from stud where speciality = Tourism and course > 1",
+        "select name from stud where speciality = 'Tourism' or course > 1"
+      ],
+      "correct": 5,
+      "explanation": "Нужен OR и кавычки у строки: speciality = 'Tourism' OR course > 1.",
+      "explanationKz": "OR және жол тырнақшасы керек: speciality = 'Tourism' OR course > 1."
     }
   ]
 }

@@ -469,7 +469,7 @@ button {
   width: 0%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--teal), #3ec4ae);
-  transition: width 0.35s ease;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .question-card {
@@ -481,18 +481,44 @@ button {
 }
 
 .question-card.swap {
-  animation: qSwap 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: qSwap 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes qSwap {
   from {
     opacity: 0;
-    transform: translateX(26px);
+    transform: translateX(34px) scale(0.985);
+  }
+  60% {
+    opacity: 1;
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
   }
+}
+
+.option-enter {
+  animation: optIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes optIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.q-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
 }
 
 .q-num {
@@ -501,7 +527,40 @@ button {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--teal);
-  margin-bottom: 0.55rem;
+  margin: 0;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  border: 1px solid color-mix(in srgb, var(--teal) 35%, transparent);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.lang-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted, #5a7280);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.55rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lang-btn.is-active {
+  background: var(--teal);
+  color: #fff;
+}
+
+.lang-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  z-index: 1;
 }
 
 .q-text {
@@ -656,7 +715,7 @@ button {
 
 .explanation.show {
   display: block;
-  animation: riseIn 0.35s ease-out both;
+  animation: riseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
 
 .quiz-nav {
@@ -671,6 +730,29 @@ button {
 .results {
   text-align: center;
   padding: 2rem 1.25rem;
+}
+
+.results.reveal {
+  animation: resultsIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes resultsIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.results.reveal .review-item {
+  animation: optIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.results.reveal .review-item:nth-child(-n + 12) {
+  animation-delay: calc(0.25s + 0.04s * var(--i, 0));
 }
 
 .results-score {

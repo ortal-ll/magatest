@@ -48,6 +48,27 @@ let questions = [];
 let currentIndex = 0;
 let lastScore = null;
 let scoreSaved = false;
+/** @type {'ru' | 'kz'} */
+let quizLang = 'ru';
+
+function qText(q) {
+  return quizLang === 'kz' && q.textKz ? q.textKz : q.text;
+}
+
+function optText(opt) {
+  return quizLang === 'kz' && opt.textKz ? opt.textKz : opt.text;
+}
+
+function qExplanation(q) {
+  if (quizLang === 'kz' && q.explanationKz) return q.explanationKz;
+  return q.explanation ?? '';
+}
+
+function syncLangButtons() {
+  document.querySelectorAll('.lang-btn').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.lang === quizLang);
+  });
+}
 
 function showError(message) {
   els.loading?.classList.add('hidden');
@@ -92,8 +113,9 @@ function renderQuestion() {
   if (!q) return;
 
   replayCardAnimation();
+  syncLangButtons();
   els.qNum.textContent = `Вопрос ${currentIndex + 1}`;
-  els.qText.textContent = q.text;
+  els.qText.textContent = qText(q);
   els.qExplanation.classList.remove('show');
   els.qExplanation.textContent = '';
 
@@ -121,9 +143,11 @@ function renderQuestion() {
     letter.textContent = LETTERS[i] || String(i + 1);
 
     const text = document.createElement('span');
-    text.textContent = opt.text;
+    text.textContent = optText(opt);
 
     btn.append(letter, text);
+    btn.classList.add('option-enter');
+    btn.style.animationDelay = `${80 + i * 55}ms`;
 
     if (q.answered) {
       btn.disabled = true;
@@ -138,8 +162,9 @@ function renderQuestion() {
     els.qOptions.appendChild(li);
   });
 
-  if (q.answered && q.explanation) {
-    els.qExplanation.textContent = q.explanation;
+  const explanation = qExplanation(q);
+  if (q.answered && explanation) {
+    els.qExplanation.textContent = explanation;
     els.qExplanation.classList.add('show');
   }
 
@@ -167,13 +192,25 @@ function onSelect(optionIndex) {
     }
   });
 
-  if (q.explanation) {
-    els.qExplanation.textContent = q.explanation;
+  const explanation = qExplanation(q);
+  if (explanation) {
+    els.qExplanation.textContent = explanation;
     els.qExplanation.classList.add('show');
   }
 
   els.btnNext.disabled = false;
   updateProgress();
+}
+
+function setQuizLang(lang) {
+  if (lang !== 'ru' && lang !== 'kz') return;
+  quizLang = lang;
+  try {
+    localStorage.setItem('magatest-quiz-lang', lang);
+  } catch {
+    /* ignore */
+  }
+  if (questions.length) renderQuestion();
 }
 
 function goNext() {
@@ -257,14 +294,28 @@ function resetSaveForm() {
   if (els.saveScoreBox) els.saveScoreBox.classList.remove('hidden');
 }
 
+function animatePercent(el, target, duration = 900) {
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = `${Math.round(target * eased)}%`;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function showResults() {
   const score = computeScore(questions);
   lastScore = score;
   els.app.classList.add('hidden');
   els.results.classList.remove('hidden');
+  els.results.classList.remove('reveal');
+  void els.results.offsetWidth;
+  els.results.classList.add('reveal');
   resetSaveForm();
 
-  els.resultsPercent.textContent = `${score.percent}%`;
+  animatePercent(els.resultsPercent, score.percent);
   els.resultsGrade.textContent = gradeLabel(score.percent);
   els.resultsSummary.textContent = `Вы ответили верно на ${score.correct} из ${score.total} вопросов.`;
   els.statCorrect.textContent = String(score.correct);
@@ -274,12 +325,15 @@ function showResults() {
   els.reviewList.innerHTML = questions
     .map((q, i) => {
       const ok = q.isCorrect;
-      const selected = q.selectedIndex != null ? q.options[q.selectedIndex]?.text : '—';
-      const correct = q.options.find((o) => o.isCorrect)?.text ?? '—';
+      const selectedOpt =
+        q.selectedIndex != null ? q.options[q.selectedIndex] : null;
+      const correctOpt = q.options.find((o) => o.isCorrect);
+      const selected = selectedOpt ? optText(selectedOpt) : '—';
+      const correct = correctOpt ? optText(correctOpt) : '—';
       return `
-        <li class="review-item ${ok ? 'ok' : 'bad'}">
+        <li class="review-item ${ok ? 'ok' : 'bad'}" style="--i:${i}">
           <div class="mark">${ok ? 'Верно' : 'Ошибка'} · ${i + 1}</div>
-          <div><strong>${escapeText(q.text)}</strong></div>
+          <div><strong>${escapeText(qText(q))}</strong></div>
           <div style="margin-top:0.35rem;color:var(--ink-muted)">
             Ваш ответ: ${escapeText(selected)}
             ${ok ? '' : `<br>Правильно: ${escapeText(correct)}`}
@@ -303,6 +357,7 @@ function startQuiz() {
   questions = prepareQuiz(bank.questions);
   currentIndex = 0;
   lastScore = null;
+  els.results.classList.remove('reveal');
   els.results.classList.add('hidden');
   els.app.classList.remove('hidden');
   document.title = `${bank.title} — МагаТест`;
@@ -355,6 +410,13 @@ async function init() {
   }
 
   try {
+    const saved = localStorage.getItem('magatest-quiz-lang');
+    if (saved === 'ru' || saved === 'kz') quizLang = saved;
+  } catch {
+    /* ignore */
+  }
+
+  try {
     const res = await fetch(`data/${encodeURIComponent(id)}.json`);
     if (!res.ok) throw new Error('Тест не найден');
     bank = await res.json();
@@ -371,5 +433,7 @@ els.btnNext?.addEventListener('click', goNext);
 els.btnPrev?.addEventListener('click', goPrev);
 els.btnRetry?.addEventListener('click', startQuiz);
 els.saveScoreForm?.addEventListener('submit', onSaveScore);
+document.getElementById('langRu')?.addEventListener('click', () => setQuizLang('ru'));
+document.getElementById('langKz')?.addEventListener('click', () => setQuizLang('kz'));
 
 init();
