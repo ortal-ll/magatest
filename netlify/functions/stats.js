@@ -1,7 +1,8 @@
 import { json, handleOptions } from '../lib/http.js';
 import { redis, keys, isRedisConfigured } from '../lib/redis.js';
+import { requireAccess } from '../lib/auth.js';
 
-const TESTS = ['algorithms', 'databases'];
+const TESTS = ['algorithms', 'databases', 'electrical-machines', 'toe'];
 
 /**
  * GET /api/stats — агрегированная статистика по тестам из Redis
@@ -20,6 +21,7 @@ export async function handler(event) {
   }
 
   try {
+    await requireAccess(event);
     const total = Number((await redis('GET', keys.attemptsTotal())) || 0);
     const byTest = {};
     for (const id of TESTS) {
@@ -27,6 +29,9 @@ export async function handler(event) {
     }
     return json(200, { ok: true, totalAttempts: total, byTest });
   } catch (err) {
+    if (err?.code === 'FORBIDDEN') {
+      return json(403, { ok: false, error: err.message });
+    }
     return json(502, { ok: false, error: err.message });
   }
 }

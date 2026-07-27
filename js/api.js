@@ -2,7 +2,33 @@
 
 const API_BASE = '/api';
 export const ACCESS_TOKEN_KEY = 'magatest-access-token';
+export const ACCESS_COOKIE_NAME = 'magatest-access';
 export const ADMIN_PASSWORD_KEY = 'magatest-admin-password';
+const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 30;
+
+function readCookie(name) {
+  try {
+    const match = document.cookie.match(
+      new RegExp(`(?:^|; )${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}=([^;]*)`)
+    );
+    return match ? decodeURIComponent(match[1]) : '';
+  } catch {
+    return '';
+  }
+}
+
+function writeCookie(name, value, maxAgeSec) {
+  try {
+    const secure = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSec}; SameSite=Lax${secure}`;
+  } catch {
+    /* ignore */
+  }
+}
+
+function clearCookie(name) {
+  writeCookie(name, '', 0);
+}
 
 async function request(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -10,6 +36,7 @@ async function request(path, options = {}) {
       'Content-Type': 'application/json',
       ...(options.headers || {}),
     },
+    credentials: 'same-origin',
     ...options,
   });
 
@@ -32,14 +59,21 @@ async function request(path, options = {}) {
 
 export function getStoredAccessToken() {
   try {
-    return localStorage.getItem(ACCESS_TOKEN_KEY) || '';
+    const ls = localStorage.getItem(ACCESS_TOKEN_KEY) || '';
+    if (ls) return ls;
   } catch {
-    return '';
+    /* ignore */
   }
+  return readCookie(ACCESS_COOKIE_NAME);
 }
 
 export function setStoredAccessToken(token) {
-  localStorage.setItem(ACCESS_TOKEN_KEY, token);
+  try {
+    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+  } catch {
+    /* ignore */
+  }
+  writeCookie(ACCESS_COOKIE_NAME, token, SESSION_MAX_AGE_SEC);
 }
 
 export function clearStoredAccessToken() {
@@ -48,6 +82,7 @@ export function clearStoredAccessToken() {
   } catch {
     /* ignore */
   }
+  clearCookie(ACCESS_COOKIE_NAME);
 }
 
 export function adminLogin(password) {

@@ -4,7 +4,7 @@
  * POST { action: 'admin-login', password }
  * POST { action: 'create-code' } + header X-Admin-Password
  * POST { action: 'redeem', code }
- * GET  ?action=check  + header X-Access-Token
+ * GET  ?action=check  + header X-Access-Token / cookie
  * POST { action: 'check', token }
  */
 
@@ -20,19 +20,12 @@ import {
   isCodeExpired,
   generateSessionToken,
   parseCodeRecord,
+  buildAccessCookie,
   CODE_REDIS_TTL_SEC,
   SESSION_TTL_SEC,
   CODE_TTL_MS,
 } from '../lib/access.js';
-
-function header(event, name) {
-  const h = event.headers || {};
-  const lower = name.toLowerCase();
-  for (const [k, v] of Object.entries(h)) {
-    if (k.toLowerCase() === lower) return v;
-  }
-  return '';
-}
+import { extractAccessToken, sessionExists, getHeader } from '../lib/auth.js';
 
 function redisError(err) {
   if (err?.code === 'REDIS_CONFIG') {
@@ -40,6 +33,18 @@ function redisError(err) {
   }
   console.error('access redis', err);
   return json(502, { error: 'Ошибка хранилища' });
+}
+
+function wantSecureCookie(event) {
+  const proto = getHeader(event, 'x-forwarded-proto') || '';
+  const host = getHeader(event, 'host') || '';
+  return proto === 'https' || host.includes('netlify.app');
+}
+
+function withAccessCookie(response, token, event, { clear = false } = {}) {
+  const secure = wantSecureCookie(event);
+  response.headers['Set-Cookie'] = buildAccessCookie(token, { clear, secure });
+  return response;
 }
 
 async function adminLogin(body) {
@@ -56,7 +61,7 @@ async function createCode(event, body = {}) {
   if (!isAdminPasswordConfigured()) {
     return json(503, { error: 'ADMIN_PASSWORD не задан в environment' });
   }
-  const password = header(event, 'x-admin-password') || body.password;
+  const password = getHeader(event, 'x-admin-password') || body.password;
   if (!verifyAdminPassword(password)) {
     return json(401, { error: 'Неверный пароль администратора' });
   }
@@ -91,7 +96,7 @@ async function createCode(event, body = {}) {
   });
 }
 
-async function redeemCode(body) {
+async function redeemCode(event, body) {
   if (!isRedisConfigured()) {
     return json(503, { error: 'Redis не настроен' });
   }
@@ -141,27 +146,30 @@ async function redeemCode(body) {
     /* optional log */
   }
 
-  return json(200, {
-    ok: true,
+  return withAccessCookie(
+    json(200, {
+      ok: true,
+      token,
+      expiresInSec: SESSION_TTL_SEC,
+    }),
     token,
-    expiresInSec: SESSION_TTL_SEC,
-  });
+    event
+  );
 }
 
 async function checkSession(event, body = {}) {
   if (!isRedisConfigured()) {
     return json(503, { error: 'Redis не настроен' });
   }
-  const token =
-    body.token ||
-    header(event, 'x-access-token') ||
-    event.queryStringParameters?.token ||
-    '';
-  if (!token || typeof token !== 'string' || token.length < 16) {
-    return json(200, { ok: false });
+  const token = extractAccessToken(event, body);
+  if (!token) {
+    return withAccessCookie(json(200, { ok: false }), '', event, { clear: true });
   }
-  const raw = await redis('GET', keys.accessSession(token));
-  return json(200, { ok: Boolean(raw) });
+  const ok = await sessionExists(token);
+  if (!ok) {
+    return withAccessCookie(json(200, { ok: false }), '', event, { clear: true });
+  }
+  return withAccessCookie(json(200, { ok: true }), token, event);
 }
 
 export async function handler(event) {
@@ -183,7 +191,7 @@ export async function handler(event) {
 
     if (action === 'admin-login') return await adminLogin(body);
     if (action === 'create-code') return await createCode(event, body);
-    if (action === 'redeem') return await redeemCode(body);
+    if (action === 'redeem') return await redeemCode(event, body);
     if (action === 'check') return await checkSession(event, body);
 
     return json(400, { error: 'Неизвестное действие' });

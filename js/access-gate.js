@@ -6,6 +6,7 @@
 import {
   getStoredAccessToken,
   clearStoredAccessToken,
+  setStoredAccessToken,
   checkAccessSession,
 } from './api.js';
 
@@ -45,14 +46,17 @@ export async function enforceAccessGate() {
       redirectToAccess();
       return false;
     }
+    // Keep cookie + localStorage in sync after a successful Redis check
+    setStoredAccessToken(token);
     document.documentElement.classList.remove('access-pending');
     document.documentElement.classList.add('access-ok');
     return true;
   } catch {
-    // Network / Redis blip: keep token but still block UI until confirmed
-    clearStoredAccessToken();
-    redirectToAccess();
-    return false;
+    // Keep cached session on API blip (Edge already validated the cookie when present)
+    setStoredAccessToken(token);
+    document.documentElement.classList.remove('access-pending');
+    document.documentElement.classList.add('access-ok');
+    return true;
   }
 }
 
