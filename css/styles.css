@@ -598,6 +598,21 @@ button {
 .q-diagram {
   margin: 0;
   padding: 0.85rem 0.75rem 0.65rem;
+}
+
+.q-diagram-svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.q-diagram {
+  margin: 0;
+  padding: 0.85rem 0.75rem 0.65rem;
   border-radius: 14px;
   background: linear-gradient(180deg, #f7fbfd 0%, #eef4f7 100%);
   border: 1px solid var(--line);

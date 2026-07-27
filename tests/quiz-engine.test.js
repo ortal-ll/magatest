@@ -175,7 +175,12 @@ describe('question banks integrity', async () => {
   const { fileURLToPath } = await import('url');
   const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-  for (const file of ['algorithms.json', 'databases.json']) {
+  for (const file of [
+    'algorithms.json',
+    'databases.json',
+    'electrical-machines.json',
+    'toe.json',
+  ]) {
     it(`${file} has valid structure`, () => {
       const bank = JSON.parse(readFileSync(join(root, 'data', file), 'utf8'));
       assert.ok(bank.id);
@@ -217,11 +222,16 @@ describe('question banks integrity', async () => {
   it('catalog references existing files', () => {
     const catalog = JSON.parse(readFileSync(join(root, 'data', 'catalog.json'), 'utf8'));
     assert.equal(catalog.subjects[0].id, 'm094');
+    assert.equal(catalog.subjects[1].id, 'm099');
     assert.equal(catalog.subjects[0].title, 'Информационные технологии M094');
-    for (const t of catalog.subjects[0].tests) {
-      const bank = JSON.parse(readFileSync(join(root, 'data', t.file), 'utf8'));
-      assert.equal(bank.id, t.id);
-      assert.equal(bank.questions.length, t.count);
+    assert.equal(catalog.subjects[1].title, 'Энергетика и электротехника M099');
+    for (const subject of catalog.subjects) {
+      for (const t of subject.tests) {
+        const bank = JSON.parse(readFileSync(join(root, 'data', t.file), 'utf8'));
+        assert.equal(bank.id, t.id);
+        assert.equal(bank.questions.length, t.count);
+        assert.equal(bank.subject, subject.id);
+      }
     }
   });
 });

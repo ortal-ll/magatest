@@ -72,6 +72,14 @@ async function init() {
     document.title = `${subject.title} — МагаТест`;
     if (titleEl) titleEl.textContent = subject.title;
 
+    document.querySelectorAll('#siteNav a').forEach((a) => {
+      const href = a.getAttribute('href') || '';
+      a.classList.toggle('active', href.includes(`id=${subject.id}`));
+    });
+
+    const footer = document.querySelector('.site-footer');
+    if (footer) footer.textContent = `МагаТест · ${subject.short || subject.id.toUpperCase()}`;
+
     renderTestList(list, subject.tests);
     loading?.classList.add('hidden');
   } catch (err) {

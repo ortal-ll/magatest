@@ -6,7 +6,7 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-export function renderTestList(container, tests) {
+export function renderTestList(container, tests, { subjectTitle } = {}) {
   if (!container) return;
   container.innerHTML = tests
     .map(
@@ -14,7 +14,9 @@ export function renderTestList(container, tests) {
     <li class="test-item">
       <div>
         <h4>${escapeHtml(t.title)}</h4>
-        <p class="test-meta">${escapeHtml(t.topic)} · ${t.count} вопросов</p>
+        <p class="test-meta">${escapeHtml(
+          subjectTitle ? `${subjectTitle} · ${t.topic}` : t.topic
+        )} · ${t.count} вопросов</p>
       </div>
       <a class="btn btn-primary" href="quiz.html?id=${encodeURIComponent(t.id)}">Начать</a>
     </li>`

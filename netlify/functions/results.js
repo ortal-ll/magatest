@@ -11,6 +11,8 @@ import { redis, redisPipeline, keys, isRedisConfigured } from '../lib/redis.js';
 const ALLOWED_TESTS = new Set([
   'algorithms',
   'databases',
+  'electrical-machines',
+  'toe',
   // legacy ids (старые записи в Redis)
   'algorithms-screenshots',
   'algorithms-test1',

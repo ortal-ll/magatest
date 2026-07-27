@@ -10,7 +10,7 @@ import { getDiagramHtml } from './diagrams.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 /** Bump when question banks change so browsers/CDN refetch JSON. */
-const DATA_VERSION = 'kz-full-1';
+const DATA_VERSION = 'm099-v1';
 
 const els = {
   loading: document.getElementById('quizLoading'),
@@ -122,14 +122,40 @@ function syncLangButtons() {
   document.documentElement.lang = quizLang === 'kz' ? 'kk' : 'ru';
 }
 
+function subjectHref() {
+  const sid = bank?.subject || 'm094';
+  return `subject.html?id=${encodeURIComponent(sid)}`;
+}
+
+function subjectLabel() {
+  if (quizLang === 'kz') {
+    return bank?.subjectTitleKz || bank?.subjectTitle || bank?.subject || 'M094';
+  }
+  return bank?.subjectTitle || bank?.subject || 'M094';
+}
+
 function applyChromeLang() {
   syncLangButtons();
   if (els.title && bank) els.title.textContent = bankTitle();
   if (bank) document.title = `${bankTitle()} — МагаТест`;
   const backLink = document.querySelector('#quizBack a');
   if (backLink) {
+    backLink.href = subjectHref();
     backLink.textContent =
-      quizLang === 'kz' ? '← M094 тесттеріне' : '← К тестам M094';
+      quizLang === 'kz'
+        ? `← ${subjectLabel()} тесттеріне`
+        : `← К тестам ${bank?.subject?.toUpperCase?.() === 'M099' || bank?.subject === 'm099' ? 'M099' : bank?.subject === 'm094' ? 'M094' : ''}`;
+    if (bank?.subject === 'm099') {
+      backLink.textContent =
+        quizLang === 'kz' ? '← M099 тесттеріне' : '← К тестам M099';
+    } else if (bank?.subject === 'm094') {
+      backLink.textContent =
+        quizLang === 'kz' ? '← M094 тесттеріне' : '← К тестам M094';
+    }
+  }
+  const resultsBack = document.getElementById('resultsBackLink');
+  if (resultsBack) {
+    resultsBack.href = subjectHref();
   }
   updateProgress();
   if (els.btnPrev) els.btnPrev.textContent = ui().back;

@@ -86,10 +86,170 @@ export function buildHashProbingDiagram() {
 </figure>`;
 }
 
+/** DC motor mechanical characteristics n(M): 1 shunt, 2 series, 3–4 compound. */
+export function buildDcMotorMechanicalChars() {
+  return `
+<figure class="q-diagram" aria-label="Механические характеристики двигателя постоянного тока">
+  <svg viewBox="0 0 420 300" role="img" class="q-diagram-svg">
+    <defs>
+      <marker id="arrN" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
+      </marker>
+      <marker id="arrM" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
+      </marker>
+    </defs>
+    <!-- axes -->
+    <line x1="55" y1="250" x2="55" y2="28" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrN)"/>
+    <line x1="55" y1="250" x2="390" y2="250" stroke="#1a455c" stroke-width="1.8" marker-end="url(#arrM)"/>
+    <text x="42" y="24" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">n</text>
+    <text x="395" y="268" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">M</text>
+
+    <!-- n0 tick -->
+    <line x1="50" y1="55" x2="60" y2="55" stroke="#1a455c" stroke-width="1.5"/>
+    <text x="30" y="60" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">n₀</text>
+
+    <!-- nominal dashed lines -->
+    <line x1="55" y1="145" x2="230" y2="145" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <line x1="230" y1="250" x2="230" y2="145" stroke="#1a455c" stroke-width="1.2" stroke-dasharray="5 4"/>
+    <text x="8" y="150" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">nₙₒₘ</text>
+    <text x="210" y="272" font-size="12" fill="#1a455c" font-family="Manrope,sans-serif">Mₙₒₘ</text>
+
+    <!-- curve 1: nearly flat (shunt/parallel) -->
+    <path d="M55,55 L360,78" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="365" y="72" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">1</text>
+
+    <!-- curve 4: mild drop (compound) -->
+    <path d="M55,55 Q200,95 340,155" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="345" y="162" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">4</text>
+
+    <!-- curve 3: steeper compound -->
+    <path d="M55,55 Q175,120 300,210" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="305" y="220" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">3</text>
+
+    <!-- curve 2: hyperbolic series -->
+    <path d="M55,55 Q95,170 120,250" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <text x="128" y="245" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">2</text>
+  </svg>
+</figure>`;
+}
+
+/** Parallel RLC with DC current source and switch opening at t=0. */
+export function buildParallelRlcSwitch() {
+  return `
+<figure class="q-diagram" aria-label="Параллельный контур RLC с источником тока">
+  <svg viewBox="0 0 520 280" role="img" class="q-diagram-svg">
+    <defs>
+      <marker id="arrDown" markerWidth="7" markerHeight="7" refX="3.5" refY="6" orient="auto">
+        <path d="M0,0 L3.5,7 L7,0 Z" fill="#1a455c"/>
+      </marker>
+    </defs>
+
+    <!-- top / bottom rails -->
+    <line x1="70" y1="55" x2="455" y2="55" stroke="#1a455c" stroke-width="2"/>
+    <line x1="70" y1="220" x2="455" y2="220" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- current source 0.1 A -->
+    <line x1="95" y1="55" x2="95" y2="109" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="95" cy="137.5" r="28" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <line x1="95" y1="155" x2="95" y2="125" stroke="#1a455c" stroke-width="2"/>
+    <polygon points="95,118 89,132 101,132" fill="#1a455c"/>
+    <line x1="95" y1="166" x2="95" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <text x="38" y="142" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">0.1 A</text>
+
+    <!-- switch t=0 (opening) -->
+    <line x1="160" y1="55" x2="160" y2="100" stroke="#1a455c" stroke-width="2"/>
+    <line x1="160" y1="100" x2="185" y2="125" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="160" cy="145" r="3.5" fill="#1a455c"/>
+    <line x1="160" y1="145" x2="160" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <text x="168" y="98" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">t=0</text>
+
+    <!-- resistor R -->
+    <line x1="240" y1="55" x2="240" y2="85" stroke="#1a455c" stroke-width="2"/>
+    <path d="M240,85 L252,95 L228,105 L252,115 L228,125 L252,135 L228,145 L240,155" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <line x1="240" y1="155" x2="240" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <text x="258" y="125" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">R</text>
+
+    <!-- inductor L + i_L(t) -->
+    <line x1="320" y1="55" x2="320" y2="90" stroke="#1a455c" stroke-width="2"/>
+    <path d="M320,90
+      a10,10 0 0 1 0,20
+      a10,10 0 0 1 0,20
+      a10,10 0 0 1 0,20
+      a10,10 0 0 1 0,20" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <line x1="320" y1="170" x2="320" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <text x="338" y="120" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">L</text>
+    <line x1="305" y1="95" x2="305" y2="165" stroke="#1a455c" stroke-width="1.5" marker-end="url(#arrDown)"/>
+    <text x="268" y="185" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">i_L(t)</text>
+
+    <!-- capacitor C -->
+    <line x1="400" y1="55" x2="400" y2="120" stroke="#1a455c" stroke-width="2"/>
+    <line x1="382" y1="120" x2="418" y2="120" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="382" y1="132" x2="418" y2="132" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="400" y1="132" x2="400" y2="220" stroke="#1a455c" stroke-width="2"/>
+    <text x="425" y="130" font-size="15" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">C</text>
+
+    <!-- output terminals u(t) -->
+    <circle cx="455" cy="55" r="4" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="455" cy="220" r="4" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <text x="468" y="60" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">+</text>
+    <text x="470" y="226" font-size="18" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">−</text>
+    <text x="475" y="145" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">u(t)</text>
+
+    <!-- values -->
+    <text x="150" y="262" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif">L = 1 мГн, C = 0.1 мкФ</text>
+  </svg>
+</figure>`;
+}
+
+/** High-pass T-section filter: two series 500 pF caps, shunt 50 mH. */
+export function buildHighpassTFilter() {
+  return `
+<figure class="q-diagram" aria-label="Секция фильтра высоких частот">
+  <svg viewBox="0 0 460 240" role="img" class="q-diagram-svg">
+    <!-- top rail with two capacitors -->
+    <circle cx="40" cy="70" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <line x1="45" y1="70" x2="100" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <!-- C1 plates -->
+    <line x1="100" y1="52" x2="100" y2="88" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="112" y1="52" x2="112" y2="88" stroke="#1a455c" stroke-width="2.5"/>
+    <text x="85" y="45" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">500 пФ</text>
+    <line x1="112" y1="70" x2="220" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <!-- C2 plates -->
+    <line x1="220" y1="52" x2="220" y2="88" stroke="#1a455c" stroke-width="2.5"/>
+    <line x1="232" y1="52" x2="232" y2="88" stroke="#1a455c" stroke-width="2.5"/>
+    <text x="210" y="45" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">500 пФ</text>
+    <line x1="232" y1="70" x2="400" y2="70" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="405" cy="70" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+
+    <!-- midpoint down to inductor -->
+    <line x1="172" y1="70" x2="172" y2="105" stroke="#1a455c" stroke-width="2"/>
+    <!-- inductor coils -->
+    <path d="M172,105
+      a11,11 0 0 1 0,22
+      a11,11 0 0 1 0,22
+      a11,11 0 0 1 0,22
+      a11,11 0 0 1 0,22" fill="none" stroke="#1a455c" stroke-width="2"/>
+    <line x1="172" y1="193" x2="172" y2="200" stroke="#1a455c" stroke-width="2"/>
+    <text x="198" y="155" font-size="14" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">50 мГн</text>
+
+    <!-- bottom rail -->
+    <circle cx="40" cy="200" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+    <line x1="45" y1="200" x2="400" y2="200" stroke="#1a455c" stroke-width="2"/>
+    <circle cx="405" cy="200" r="5" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+  </svg>
+</figure>`;
+}
+
+const DIAGRAMS = {
+  'hash-probing-linear-quadratic': buildHashProbingDiagram,
+  'dc-motor-mechanical-chars': buildDcMotorMechanicalChars,
+  'parallel-rlc-switch': buildParallelRlcSwitch,
+  'highpass-t-filter': buildHighpassTFilter,
+};
+
 export function getDiagramHtml(diagramId) {
   if (!diagramId) return '';
-  if (diagramId === 'hash-probing-linear-quadratic') {
-    return buildHashProbingDiagram();
-  }
-  return '';
+  const build = DIAGRAMS[diagramId];
+  return build ? build() : '';
 }
