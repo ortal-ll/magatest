@@ -7,6 +7,7 @@ import {
   buildParallelRlcSwitch,
   buildHighpassTFilter,
   buildInductionMotorTCircuit,
+  buildSyncArmatureReactionFa,
 } from '../js/diagrams.js';
 
 describe('diagrams', () => {
@@ -60,12 +61,24 @@ describe('diagrams', () => {
     assert.match(html, /Iₘ/);
   });
 
+  it('builds sync armature reaction Fa diagrams', () => {
+    const html = buildSyncArmatureReactionFa();
+    assert.match(html, />1</);
+    assert.match(html, />2</);
+    assert.match(html, />3</);
+    assert.match(html, /Fₐ/);
+    assert.match(html, /Φ_fmax/);
+    assert.match(html, />d</);
+    assert.match(html, />q</);
+  });
+
   it('resolves known diagramId', () => {
     assert.ok(getDiagramHtml('hash-probing-linear-quadratic').includes('svg'));
     assert.ok(getDiagramHtml('dc-motor-mechanical-chars').includes('svg'));
     assert.ok(getDiagramHtml('parallel-rlc-switch').includes('svg'));
     assert.ok(getDiagramHtml('highpass-t-filter').includes('svg'));
     assert.ok(getDiagramHtml('induction-motor-t-circuit').includes('svg'));
+    assert.ok(getDiagramHtml('sync-armature-reaction-fa').includes('svg'));
     assert.equal(getDiagramHtml('unknown'), '');
     assert.equal(getDiagramHtml(null), '');
   });

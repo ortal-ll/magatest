@@ -11,7 +11,7 @@ import { getDiagramHtml } from './diagrams.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 /** Bump when question banks change so browsers/CDN refetch JSON. */
-const DATA_VERSION = 'em-q9-13-14';
+const DATA_VERSION = 'em-q4-5-arm';
 
 const els = {
   loading: document.getElementById('quizLoading'),

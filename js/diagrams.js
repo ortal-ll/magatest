@@ -324,12 +324,85 @@ export function buildHighpassTFilter() {
 </figure>`;
 }
 
+/** Three sync-machine cross-sections: armature reaction Fa vs load type. */
+export function buildSyncArmatureReactionFa() {
+  function machine(ox, label, faAngleDeg) {
+    const cx = ox + 95;
+    const cy = 110;
+    const R = 72;
+    const rRotor = 34;
+    // Fa tip
+    const rad = (faAngleDeg * Math.PI) / 180;
+    const faLen = 48;
+    const fax = cx + faLen * Math.cos(rad);
+    const fay = cy - faLen * Math.sin(rad);
+    // slot ticks at 0,60,120,180,240,300 deg (from +x, CCW) — visual stator slots
+    const slots = [0, 60, 120, 180, 240, 300]
+      .map((deg) => {
+        const a = (deg * Math.PI) / 180;
+        const x1 = cx + (R - 8) * Math.cos(a);
+        const y1 = cy - (R - 8) * Math.sin(a);
+        const x2 = cx + (R + 2) * Math.cos(a);
+        const y2 = cy - (R + 2) * Math.sin(a);
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#1a455c" stroke-width="2.2"/>`;
+      })
+      .join('');
+
+    return `
+    <g>
+      <text x="${cx}" y="22" text-anchor="middle" font-size="16" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">${label}</text>
+      <!-- stator -->
+      <circle cx="${cx}" cy="${cy}" r="${R}" fill="#fff" stroke="#1a455c" stroke-width="2"/>
+      ${slots}
+      <!-- rotor -->
+      <circle cx="${cx}" cy="${cy}" r="${rRotor}" fill="#fff" stroke="#1a455c" stroke-width="1.8"/>
+      <line x1="${cx}" y1="${cy - rRotor}" x2="${cx}" y2="${cy + rRotor}" stroke="#1a455c" stroke-width="1.2"/>
+      <text x="${cx}" y="${cy - 12}" text-anchor="middle" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">N</text>
+      <text x="${cx}" y="${cy + 22}" text-anchor="middle" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif" font-weight="700">S</text>
+      <!-- d axis (vertical) -->
+      <line x1="${cx}" y1="${cy + R + 8}" x2="${cx}" y2="${cy - R - 18}" stroke="#1a455c" stroke-width="1.3" stroke-dasharray="4 3"/>
+      <text x="${cx + 8}" y="${cy - R - 20}" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">d</text>
+      <!-- q axis (horizontal) -->
+      <line x1="${cx - R - 8}" y1="${cy}" x2="${cx + R + 18}" y2="${cy}" stroke="#1a455c" stroke-width="1.3" stroke-dasharray="4 3"/>
+      <text x="${cx + R + 20}" y="${cy - 6}" font-size="13" fill="#1a455c" font-family="Manrope,sans-serif">q</text>
+      <!-- Φ_fmax up along d -->
+      <line x1="${cx}" y1="${cy - 6}" x2="${cx}" y2="${cy - 58}" stroke="#1a455c" stroke-width="2" marker-end="url(#arrFa)"/>
+      <text x="${cx - 52}" y="${cy - 38}" font-size="11" fill="#1a455c" font-family="Manrope,sans-serif">Φ_fmax</text>
+      <!-- Fa -->
+      <line x1="${cx}" y1="${cy}" x2="${fax}" y2="${fay}" stroke="#c45c26" stroke-width="2.4" marker-end="url(#arrFaOrange)"/>
+      <text x="${fax + 6}" y="${fay + 4}" font-size="13" fill="#c45c26" font-family="Manrope,sans-serif" font-weight="700">Fₐ</text>
+    </g>`;
+  }
+
+  // angles: 0° = +q (right), 90° = +d (up), -90°/270° = -d (down)
+  // 1 active: Fa along +q → 0°
+  // 2 active-inductive: between +q and -d → about -45° (down-right)
+  // 3 inductive: Fa along -d → -90°
+  return `
+<figure class="q-diagram" aria-label="Реакция якоря синхронной машины">
+  <svg viewBox="0 0 580 230" role="img" class="q-diagram-svg">
+    <defs>
+      <marker id="arrFa" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0 L6,3.5 L0,7 Z" fill="#1a455c"/>
+      </marker>
+      <marker id="arrFaOrange" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <path d="M0,0 L6,3.5 L0,7 Z" fill="#c45c26"/>
+      </marker>
+    </defs>
+    ${machine(0, '1', 0)}
+    ${machine(195, '2', -50)}
+    ${machine(390, '3', -90)}
+  </svg>
+</figure>`;
+}
+
 const DIAGRAMS = {
   'hash-probing-linear-quadratic': buildHashProbingDiagram,
   'dc-motor-mechanical-chars': buildDcMotorMechanicalChars,
   'parallel-rlc-switch': buildParallelRlcSwitch,
   'highpass-t-filter': buildHighpassTFilter,
   'induction-motor-t-circuit': buildInductionMotorTCircuit,
+  'sync-armature-reaction-fa': buildSyncArmatureReactionFa,
 };
 
 export function getDiagramHtml(diagramId) {
