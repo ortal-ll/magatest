@@ -9,6 +9,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    (function () {
+      try {
+        var key = 'magatest-access-token';
+        var token = localStorage.getItem(key) || '';
+        if (!token) {
+          var m = document.cookie.match(/(?:^|; )magatest-access=([^;]*)/);
+          token = m ? decodeURIComponent(m[1]) : '';
+        }
+        if (!token) {
+          var page = (location.pathname.split('/').pop() || 'index.html');
+          if (!page || page === '/') page = 'index.html';
+          location.replace('access.html?next=' + encodeURIComponent(page + location.search));
+        }
+      } catch (e) {
+        location.replace('access.html');
+      }
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">К содержимому</a>

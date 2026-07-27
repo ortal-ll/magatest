@@ -8,7 +8,14 @@ import {
   isCodeExpired,
   parseCodeRecord,
   verifyAdminPassword,
+  isValidSessionToken,
+  parseCookieHeader,
+  buildAccessCookie,
+  isPublicAccessPath,
+  isProtectedAccessPath,
+  ACCESS_COOKIE_NAME,
   CODE_TTL_MS,
+  SESSION_TTL_SEC,
 } from '../netlify/lib/access.js';
 
 describe('access helpers', () => {
@@ -63,5 +70,36 @@ describe('access helpers', () => {
     assert.equal(verifyAdminPassword(''), false);
     if (prev == null) delete process.env.ADMIN_PASSWORD;
     else process.env.ADMIN_PASSWORD = prev;
+  });
+
+  it('session TTL is three months', () => {
+    assert.equal(SESSION_TTL_SEC, 60 * 60 * 24 * 90);
+  });
+
+  it('validates session tokens and cookies', () => {
+    assert.equal(isValidSessionToken('a'.repeat(64)), true);
+    assert.equal(isValidSessionToken('short'), false);
+    assert.equal(isValidSessionToken(''), false);
+    const cookies = parseCookieHeader(`${ACCESS_COOKIE_NAME}=abc123; other=1`);
+    assert.equal(cookies[ACCESS_COOKIE_NAME], 'abc123');
+    assert.equal(cookies.other, '1');
+    const set = buildAccessCookie('deadbeef'.repeat(8));
+    assert.match(set, new RegExp(`^${ACCESS_COOKIE_NAME}=`));
+    assert.match(set, /Max-Age=/);
+    const cleared = buildAccessCookie('', { clear: true });
+    assert.match(cleared, /Max-Age=0/);
+  });
+
+  it('classifies public vs protected paths', () => {
+    assert.equal(isPublicAccessPath('/access.html'), true);
+    assert.equal(isPublicAccessPath('/admin.html'), true);
+    assert.equal(isPublicAccessPath('/api/access'), true);
+    assert.equal(isPublicAccessPath('/css/styles.css'), true);
+    assert.equal(isProtectedAccessPath('/'), true);
+    assert.equal(isProtectedAccessPath('/index.html'), true);
+    assert.equal(isProtectedAccessPath('/quiz.html'), true);
+    assert.equal(isProtectedAccessPath('/data/catalog.json'), true);
+    assert.equal(isProtectedAccessPath('/access.html'), false);
+    assert.equal(isProtectedAccessPath('/js/home.js'), false);
   });
 });

@@ -7,6 +7,7 @@ import {
   clampInt,
 } from '../lib/http.js';
 import { redis, redisPipeline, keys, isRedisConfigured } from '../lib/redis.js';
+import { requireAccess } from '../lib/auth.js';
 
 const ALLOWED_TESTS = new Set([
   'algorithms',
@@ -18,30 +19,6 @@ const ALLOWED_TESTS = new Set([
   'algorithms-test1',
   'databases-test1',
 ]);
-
-function header(event, name) {
-  const h = event.headers || {};
-  const lower = name.toLowerCase();
-  for (const [k, v] of Object.entries(h)) {
-    if (k.toLowerCase() === lower) return v;
-  }
-  return '';
-}
-
-async function requireAccess(event) {
-  const token = header(event, 'x-access-token');
-  if (!token || token.length < 16) {
-    const err = new Error('Нужен код доступа');
-    err.code = 'FORBIDDEN';
-    throw err;
-  }
-  const raw = await redis('GET', keys.accessSession(token));
-  if (!raw) {
-    const err = new Error('Сессия доступа недействительна');
-    err.code = 'FORBIDDEN';
-    throw err;
-  }
-}
 
 /**
  * POST /api/results — сохранить результат теста в Upstash Redis

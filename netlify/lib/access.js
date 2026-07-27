@@ -3,11 +3,30 @@
  */
 
 import { randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
+import {
+  ACCESS_COOKIE_NAME,
+  SESSION_STORAGE_KEY,
+  SESSION_TTL_SEC,
+  parseCookieHeader,
+  isValidSessionToken,
+  buildAccessCookie,
+  isPublicAccessPath,
+  isProtectedAccessPath,
+} from './access-shared.js';
+
+export {
+  ACCESS_COOKIE_NAME,
+  SESSION_STORAGE_KEY,
+  SESSION_TTL_SEC,
+  parseCookieHeader,
+  isValidSessionToken,
+  buildAccessCookie,
+  isPublicAccessPath,
+  isProtectedAccessPath,
+};
 
 export const CODE_TTL_MS = 60_000;
 export const CODE_REDIS_TTL_SEC = 70;
-export const SESSION_TTL_SEC = 60 * 60 * 24 * 30; // 30 days
-export const SESSION_STORAGE_KEY = 'magatest-access-token';
 
 export function getAdminPassword() {
   return process.env.ADMIN_PASSWORD || '';
