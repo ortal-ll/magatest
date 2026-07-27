@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Информационные технологии M094 — тесты для подготовки к магистратуре." />
+  <title>Информационные технологии M094 — МагаТест</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">Мага<em>Тест</em></a>
+      <button class="nav-toggle" type="button" aria-label="Меню" aria-expanded="false" id="navToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="Главное меню">
+        <a href="subject.html?id=m094" class="active">Информационные технологии M094</a>
+        <a href="index.html#how">Как работает</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <section class="quiz-top">
+      <p class="quiz-meta"><a href="index.html" style="color:rgba(255,255,255,0.75)">← На главную</a></p>
+      <h1 id="subjectTitle">Информационные технологии M094</h1>
+      <p class="quiz-meta" id="subjectDesc">Загрузка…</p>
+    </section>
+
+    <section class="panel" aria-labelledby="subject-tests-title">
+      <h2 class="section-title" id="subject-tests-title">Тесты</h2>
+      <p class="section-sub">Выберите тест — порядок вопросов и ответов каждый раз новый.</p>
+      <ul class="test-list" id="subjectTestList"></ul>
+      <div class="loading" id="subjectLoading">Загрузка каталога…</div>
+      <div class="error-box hidden" id="subjectError"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    МагаТест — подготовка к магистратуре · Информационные технологии M094
+  </footer>
+
+  <script type="module" src="js/subject.js"></script>
+  <script type="module" src="js/nav.js"></script>
+</body>
+</html>
