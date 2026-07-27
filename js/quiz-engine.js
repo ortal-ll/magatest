@@ -48,6 +48,7 @@ export function prepareQuiz(questions, random = Math.random) {
     return {
       id: q.id ?? `q${originalIndex + 1}`,
       text: q.text,
+      diagramId: q.diagramId ?? null,
       explanation: q.explanation ?? null,
       options: shuffledOptions,
       answered: false,

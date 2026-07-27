@@ -476,6 +476,53 @@ button {
   letter-spacing: -0.01em;
 }
 
+.q-diagram-slot {
+  margin: 0 0 1.15rem;
+}
+
+.q-diagram {
+  margin: 0;
+  padding: 0.85rem 0.75rem 0.65rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f7fbfd 0%, #eef4f7 100%);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.hash-probe-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 1.5rem;
+}
+
+.hash-probe-col {
+  flex: 1 1 180px;
+  max-width: 240px;
+  text-align: center;
+}
+
+.hash-probe-col svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hash-probe-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 0.35rem;
+  color: var(--teal);
+}
+
+.q-diagram-cap {
+  margin: 0.55rem 0 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
 .options {
   list-style: none;
   margin: 0;

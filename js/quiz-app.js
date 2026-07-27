@@ -6,6 +6,7 @@ import {
 } from './quiz-engine.js';
 import { getQueryParam } from './catalog-ui.js';
 import { saveResult, fetchResults } from './api.js';
+import { getDiagramHtml } from './diagrams.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -21,6 +22,7 @@ const els = {
   progressFill: document.getElementById('progressFill'),
   qNum: document.getElementById('qNum'),
   qText: document.getElementById('qText'),
+  qDiagram: document.getElementById('qDiagram'),
   qOptions: document.getElementById('qOptions'),
   qExplanation: document.getElementById('qExplanation'),
   btnPrev: document.getElementById('btnPrev'),
@@ -85,6 +87,17 @@ function renderQuestion() {
   els.qText.textContent = q.text;
   els.qExplanation.classList.remove('show');
   els.qExplanation.textContent = '';
+
+  if (els.qDiagram) {
+    const html = getDiagramHtml(q.diagramId);
+    if (html) {
+      els.qDiagram.innerHTML = html;
+      els.qDiagram.hidden = false;
+    } else {
+      els.qDiagram.innerHTML = '';
+      els.qDiagram.hidden = true;
+    }
+  }
 
   els.qOptions.innerHTML = '';
   q.options.forEach((opt, i) => {

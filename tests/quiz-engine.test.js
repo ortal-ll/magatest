@@ -78,6 +78,20 @@ describe('prepareQuiz', () => {
       /invalid correct/
     );
   });
+  it('preserves diagramId through prepareQuiz', () => {
+    const prepared = prepareQuiz(
+      [
+        {
+          text: 'With figure',
+          options: ['a', 'b'],
+          correct: 0,
+          diagramId: 'hash-probing-linear-quadratic',
+        },
+      ],
+      seededRandom(1)
+    );
+    assert.equal(prepared[0].diagramId, 'hash-probing-linear-quadratic');
+  });
 });
 
 describe('answerQuestion', () => {
