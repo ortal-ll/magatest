@@ -6,6 +6,7 @@ import {
   answerQuestion,
   computeScore,
   gradeLabel,
+  togglePendingSelection,
 } from '../js/quiz-engine.js';
 
 /** Deterministic RNG from a seed (mulberry32). */
@@ -122,6 +123,48 @@ describe('prepareQuiz', () => {
       if (opt.text === 'три') assert.equal(opt.textKz, 'үш');
     }
   });
+
+  it('supports multi-correct options', () => {
+    const prepared = prepareQuiz(
+      [
+        {
+          text: 'Pick two',
+          options: ['a', 'b', 'c', 'd'],
+          correct: [0, 2],
+        },
+      ],
+      seededRandom(3)
+    );
+    const q = prepared[0];
+    assert.equal(q.multi, true);
+    assert.equal(q.options.filter((o) => o.isCorrect).length, 2);
+
+    const correctIdx = q.options
+      .map((o, i) => (o.isCorrect ? i : -1))
+      .filter((i) => i >= 0);
+    const wrong = answerQuestion(q, [correctIdx[0]]);
+    assert.equal(wrong.isCorrect, false);
+
+    const q2 = prepareQuiz(
+      [{ text: 'Pick two', options: ['a', 'b', 'c', 'd'], correct: [0, 2] }],
+      seededRandom(3)
+    )[0];
+    const idx = q2.options
+      .map((o, i) => (o.isCorrect ? i : -1))
+      .filter((i) => i >= 0);
+    const ok = answerQuestion(q2, idx);
+    assert.equal(ok.isCorrect, true);
+  });
+
+  it('toggles pending multi selection', () => {
+    const q = prepareQuiz(
+      [{ text: 'm', options: ['a', 'b', 'c'], correct: [0, 1] }],
+      seededRandom(1)
+    )[0];
+    assert.deepEqual(togglePendingSelection(q, 0), [0]);
+    assert.deepEqual(togglePendingSelection(q, 2), [0, 2]);
+    assert.deepEqual(togglePendingSelection(q, 0), [2]);
+  });
 });
 
 describe('answerQuestion', () => {
@@ -191,12 +234,14 @@ describe('question banks integrity', async () => {
       for (const [i, q] of bank.questions.entries()) {
         assert.equal(typeof q.text, 'string', `q${i} text`);
         assert.ok(Array.isArray(q.options) && q.options.length >= 2, `q${i} options`);
-        assert.ok(
-          typeof q.correct === 'number' &&
-            q.correct >= 0 &&
-            q.correct < q.options.length,
-          `q${i} correct`
-        );
+        const correctList = Array.isArray(q.correct) ? q.correct : [q.correct];
+        assert.ok(correctList.length >= 1, `q${i} correct non-empty`);
+        for (const c of correctList) {
+          assert.ok(
+            typeof c === 'number' && c >= 0 && c < q.options.length,
+            `q${i} correct index ${c}`
+          );
+        }
         if (q.textKz != null) assert.equal(typeof q.textKz, 'string', `q${i} textKz`);
         if (q.optionsKz != null) {
           assert.ok(Array.isArray(q.optionsKz), `q${i} optionsKz array`);

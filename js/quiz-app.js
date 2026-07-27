@@ -3,6 +3,7 @@ import {
   answerQuestion,
   computeScore,
   gradeLabel,
+  togglePendingSelection,
 } from './quiz-engine.js';
 import { getQueryParam } from './catalog-ui.js';
 import { saveResult, fetchResults } from './api.js';
@@ -10,7 +11,7 @@ import { getDiagramHtml } from './diagrams.js';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 /** Bump when question banks change so browsers/CDN refetch JSON. */
-const DATA_VERSION = 'm099-v2';
+const DATA_VERSION = 'multi-v1';
 
 const els = {
   loading: document.getElementById('quizLoading'),
@@ -60,6 +61,8 @@ const UI = {
     correctLive: (c, a) => `Верно: ${c} / ${a}`,
     next: 'Далее',
     result: 'Результат',
+    check: 'Проверить',
+    multiHint: 'Несколько ответов — отметьте все верные',
     back: 'Назад',
     ok: 'Верно',
     bad: 'Ошибка',
@@ -73,6 +76,8 @@ const UI = {
     correctLive: (c, a) => `Дұрыс: ${c} / ${a}`,
     next: 'Келесі',
     result: 'Нәтиже',
+    check: 'Тексеру',
+    multiHint: 'Бірнеше жауап — барлық дұрысын белгілеңіз',
     back: 'Артқа',
     ok: 'Дұрыс',
     bad: 'Қате',
@@ -211,6 +216,20 @@ function renderQuestion({ animate = true } = {}) {
   applyChromeLang();
   els.qNum.textContent = ui().questionN(currentIndex + 1);
   els.qText.textContent = qText(q);
+  let hintEl = document.getElementById('multiHint');
+  if (!hintEl) {
+    hintEl = document.createElement('p');
+    hintEl.id = 'multiHint';
+    hintEl.className = 'multi-hint';
+    els.qText.after(hintEl);
+  }
+  if (q.multi && !q.answered) {
+    hintEl.textContent = ui().multiHint;
+    hintEl.hidden = false;
+  } else {
+    hintEl.textContent = '';
+    hintEl.hidden = true;
+  }
   els.qExplanation.classList.remove('show');
   els.qExplanation.textContent = '';
 
@@ -225,6 +244,8 @@ function renderQuestion({ animate = true } = {}) {
     }
   }
 
+  const pending = new Set(q.selectedIndices || []);
+
   els.qOptions.innerHTML = '';
   q.options.forEach((opt, i) => {
     const li = document.createElement('li');
@@ -232,6 +253,7 @@ function renderQuestion({ animate = true } = {}) {
     btn.type = 'button';
     btn.className = 'option';
     btn.dataset.index = String(i);
+    if (q.multi) btn.classList.add('option-multi');
 
     const letter = document.createElement('span');
     letter.className = 'option-letter';
@@ -248,9 +270,13 @@ function renderQuestion({ animate = true } = {}) {
 
     if (q.answered) {
       btn.disabled = true;
+      const selected = (q.selectedIndices || []).includes(i);
       if (opt.isCorrect) btn.classList.add('correct');
-      if (i === q.selectedIndex && !opt.isCorrect) btn.classList.add('wrong');
-      if (i !== q.selectedIndex && !opt.isCorrect) btn.classList.add('dimmed');
+      if (selected && !opt.isCorrect) btn.classList.add('wrong');
+      if (!selected && !opt.isCorrect) btn.classList.add('dimmed');
+    } else if (q.multi) {
+      if (pending.has(i)) btn.classList.add('is-selected');
+      btn.addEventListener('click', () => onToggleMulti(i));
     } else {
       btn.addEventListener('click', () => onSelect(i));
     }
@@ -266,23 +292,49 @@ function renderQuestion({ animate = true } = {}) {
   }
 
   els.btnPrev.disabled = currentIndex === 0;
-  els.btnNext.disabled = !q.answered;
+  syncNextButton(q);
+}
+
+function syncNextButton(q) {
+  if (!els.btnNext) return;
+  if (q.answered) {
+    els.btnNext.disabled = false;
+    els.btnNext.textContent =
+      currentIndex === questions.length - 1 ? ui().result : ui().next;
+    return;
+  }
+  if (q.multi) {
+    const n = (q.selectedIndices || []).length;
+    els.btnNext.disabled = n === 0;
+    els.btnNext.textContent = ui().check;
+    return;
+  }
+  els.btnNext.disabled = true;
   els.btnNext.textContent =
     currentIndex === questions.length - 1 ? ui().result : ui().next;
 }
 
-function onSelect(optionIndex) {
+function onToggleMulti(optionIndex) {
   const q = questions[currentIndex];
-  const result = answerQuestion(q, optionIndex);
-
+  if (!q || q.answered || !q.multi) return;
+  togglePendingSelection(q, optionIndex);
   const buttons = els.qOptions.querySelectorAll('.option');
   buttons.forEach((btn, i) => {
+    btn.classList.toggle('is-selected', (q.selectedIndices || []).includes(i));
+  });
+  syncNextButton(q);
+}
+
+function lockAnswerFeedback(q, result) {
+  const buttons = els.qOptions.querySelectorAll('.option');
+  const selected = new Set(result.selectedIndices || [result.selectedIndex]);
+  buttons.forEach((btn, i) => {
     btn.disabled = true;
+    btn.classList.remove('is-selected');
     const isCorrectOpt = q.options[i].isCorrect;
-    if (i === result.selectedIndex && !result.isCorrect) btn.classList.add('wrong');
-    if (i !== result.selectedIndex && !isCorrectOpt) btn.classList.add('dimmed');
+    if (selected.has(i) && !isCorrectOpt) btn.classList.add('wrong');
+    if (!selected.has(i) && !isCorrectOpt) btn.classList.add('dimmed');
     if (isCorrectOpt) {
-      // лёгкая задержка, чтобы правильный ответ раскрывался плавно после клика
       setTimeout(() => btn.classList.add('correct'), result.isCorrect ? 0 : 180);
     }
   });
@@ -293,8 +345,30 @@ function onSelect(optionIndex) {
     els.qExplanation.classList.add('show');
   }
 
-  els.btnNext.disabled = false;
+  const hintEl = document.getElementById('multiHint');
+  if (hintEl) hintEl.hidden = true;
+
+  syncNextButton(q);
   updateProgress();
+}
+
+function onSelect(optionIndex) {
+  const q = questions[currentIndex];
+  if (!q || q.answered) return;
+  if (q.multi) {
+    onToggleMulti(optionIndex);
+    return;
+  }
+  const result = answerQuestion(q, optionIndex);
+  lockAnswerFeedback(q, result);
+}
+
+function confirmMultiAnswer() {
+  const q = questions[currentIndex];
+  if (!q || q.answered || !q.multi) return;
+  if (!(q.selectedIndices || []).length) return;
+  const result = answerQuestion(q, q.selectedIndices);
+  lockAnswerFeedback(q, result);
 }
 
 function setQuizLang(lang) {
@@ -319,7 +393,15 @@ function setQuizLang(lang) {
 
 function goNext() {
   const q = questions[currentIndex];
-  if (!q?.answered) return;
+  if (!q) return;
+
+  if (!q.answered) {
+    if (q.multi) {
+      confirmMultiAnswer();
+      return;
+    }
+    return;
+  }
 
   if (currentIndex >= questions.length - 1) {
     showResults();
@@ -430,14 +512,15 @@ function showResults() {
   els.reviewList.innerHTML = questions
     .map((q, i) => {
       const ok = q.isCorrect;
-      const selectedOpt =
-        q.selectedIndex != null ? q.options[q.selectedIndex] : null;
-      const correctOpt = q.options.find((o) => o.isCorrect);
-      const selected = selectedOpt ? optText(selectedOpt) : '—';
-      const correct = correctOpt ? optText(correctOpt) : '—';
+      const selectedIdxs = q.selectedIndices || (q.selectedIndex != null ? [q.selectedIndex] : []);
+      const correctIdxs = q.options
+        .map((o, idx) => (o.isCorrect ? idx : -1))
+        .filter((idx) => idx >= 0);
+      const selected = selectedIdxs.map((idx) => optText(q.options[idx])).join('; ') || '—';
+      const correct = correctIdxs.map((idx) => optText(q.options[idx])).join('; ') || '—';
       return `
         <li class="review-item ${ok ? 'ok' : 'bad'}" style="--i:${i}">
-          <div class="mark">${ok ? t.ok : t.bad} · ${i + 1}</div>
+          <div class="mark">${ok ? t.ok : t.bad} · ${i + 1}${q.multi ? ' · multi' : ''}</div>
           <div><strong>${escapeText(qText(q))}</strong></div>
           <div style="margin-top:0.35rem;color:var(--ink-muted)">
             ${t.yourAnswer}: ${escapeText(selected)}
