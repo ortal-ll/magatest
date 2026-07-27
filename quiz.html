@@ -49,7 +49,13 @@
       </section>
 
       <section class="question-card" id="questionCard" aria-live="polite">
-        <div class="q-num" id="qNum">Вопрос 1</div>
+        <div class="q-head">
+          <div class="q-num" id="qNum">Вопрос 1</div>
+          <div class="lang-toggle" role="group" aria-label="Язык вопроса">
+            <button type="button" class="lang-btn is-active" id="langRu" data-lang="ru">RU</button>
+            <button type="button" class="lang-btn" id="langKz" data-lang="kz">KZ</button>
+          </div>
+        </div>
         <p class="q-text" id="qText"></p>
         <div class="q-diagram-slot" id="qDiagram" hidden></div>
         <ul class="options" id="qOptions"></ul>

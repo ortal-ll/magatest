@@ -39,8 +39,17 @@ export function prepareQuiz(questions, random = Math.random) {
       throw new Error(`Question ${originalIndex} has invalid correct index`);
     }
 
+    if (q.optionsKz != null) {
+      if (!Array.isArray(q.optionsKz) || q.optionsKz.length !== q.options.length) {
+        throw new Error(
+          `Question ${originalIndex}: optionsKz must match options length`
+        );
+      }
+    }
+
     const indexed = q.options.map((text, i) => ({
       text,
+      textKz: q.optionsKz?.[i] ?? null,
       isCorrect: i === q.correct,
     }));
     const shuffledOptions = shuffle(indexed, random);
@@ -48,8 +57,10 @@ export function prepareQuiz(questions, random = Math.random) {
     return {
       id: q.id ?? `q${originalIndex + 1}`,
       text: q.text,
+      textKz: q.textKz ?? null,
       diagramId: q.diagramId ?? null,
       explanation: q.explanation ?? null,
+      explanationKz: q.explanationKz ?? null,
       options: shuffledOptions,
       answered: false,
       selectedIndex: null,

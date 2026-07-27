@@ -513,13 +513,54 @@ button {
   }
 }
 
+.q-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+}
+
 .q-num {
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--teal);
-  margin-bottom: 0.55rem;
+  margin: 0;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  border: 1px solid color-mix(in srgb, var(--teal) 35%, transparent);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.lang-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted, #5a7280);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.55rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lang-btn.is-active {
+  background: var(--teal);
+  color: #fff;
+}
+
+.lang-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  z-index: 1;
 }
 
 .q-text {

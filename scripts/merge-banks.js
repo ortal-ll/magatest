@@ -28,13 +28,18 @@ function stripLetters(opts) {
   return opts.map((o) => o.replace(/^[A-E]\)\s*/, ''));
 }
 
-function q(text, options, correctLetter, explanation = null) {
+function q(text, options, correctLetter, explanation = null, kz = null) {
   const correct = 'ABCDE'.indexOf(correctLetter.toUpperCase());
   if (correct < 0 || correct >= options.length) {
     throw new Error(`Bad correct letter ${correctLetter} for: ${text.slice(0, 40)}`);
   }
   const item = { text, options: stripLetters(options), correct };
   if (explanation) item.explanation = explanation;
+  if (kz) {
+    if (kz.text) item.textKz = kz.text;
+    if (kz.options) item.optionsKz = stripLetters(kz.options);
+    if (kz.explanation) item.explanationKz = kz.explanation;
+  }
   return item;
 }
 
